@@ -33,7 +33,7 @@
                   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;";
 
       $dbh->exec($query);
-      echo "DB installed successfully" . PHP_EOL;
+      echo "DB created successfully" . PHP_EOL;
   }
   catch (PDOException $e) {
       die("DB ERROR: ". $e->getMessage());
