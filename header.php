@@ -1,12 +1,21 @@
 <ul class="topnav">
-  <li><a href="#home">CAMABRUUUUUUU</a></li>
-  <li><a href="#news">HALL OF FAME (or loose)</a></li>
-  <li class="dropdown right">
-    <a href="javascript:void(0)" class="dropbtn">Profile</a>
-    <div class="dropdown-content">
-      <a href="#">Mes photos</a>
-      <a href="#">Paramètres</a>
-      <a href="logout.php">Déconnexion</a>
-    </div>
-  </li>
+  <li><a href="#Camagru">CAMABRUUUUUUU</a></li>
+  <li><a href="global_galery.php">HALL OF FAME (or loose)</a></li>
+  <?php
+      if (!isset($_SESSION['login']) || $_SESSION['login'] == "") {
+        $log_bar = '<li class="right"><a href="sign_up.php">Sign up</a></li>
+                    <li class="right"><a href="connection.php">Login</a></li>';
+      }
+      else {
+        $log_bar = '<li class="dropdown right">
+                      <a href="javascript:void(0)" class="dropbtn">Profile</a>
+                      <div class="dropdown-content">
+                        <a href="personal_galery.php">My pictures</a>
+                        <a href="account_settings.php">Settings</a>
+                        <a href="logout.php">Logout</a>
+                      </div>
+                    </li>';
+      }
+      echo $log_bar;
+  ?>
 </ul>

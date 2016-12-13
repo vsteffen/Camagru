@@ -6,6 +6,8 @@ html, body {
     margin: 0;
 }
 
+/*<----------------- TOP NAV BAR ----------------->*/
+
 ul {
     list-style-type: none;
     margin: 0;
@@ -62,6 +64,7 @@ ul.topnav li.right {float: right;}
     display: block;
 }
 
+/*<----------------- END OF TOP NAV BAR ----------------->*/
 .row {
     width : 960px;
     margin : 10px auto;
