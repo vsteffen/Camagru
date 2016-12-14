@@ -1,5 +1,5 @@
 <ul class="topnav">
-  <li><a href="#Camagru">CAMABRUUUUUUU</a></li>
+  <li><a class="camabruuu" href="index.php">CAMABRUUUUUUU</a></li>
   <li><a href="global_galery.php">HALL OF FAME (or loose)</a></li>
   <?php
       if (!isset($_SESSION['login']) || $_SESSION['login'] == "") {

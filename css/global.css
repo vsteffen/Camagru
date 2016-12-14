@@ -6,14 +6,26 @@ html, body {
     margin: 0;
 }
 
+@font-face {
+    font-family: 'Sugarpunch';
+    src: url('../font/SugarpunchDEMO.otf');
+}
+
+.camabruuu {
+  font-family: 'Sugarpunch';
+  font-size: 30px;
+}
+
 /*<----------------- TOP NAV BAR ----------------->*/
 
 ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
+    /*padding-top: 10px;*/
     overflow: hidden;
-    background-color: #333;
+    font-size: 20px;
+    background-color: #2F3131;
 }
 
 li {
@@ -29,7 +41,8 @@ li a, .dropbtn {
 }
 
 li a:hover, .dropdown:hover .dropbtn {
-    background-color: #4CAF50;
+    background-color: #DC9A0A;
+    height: 31px;
 }
 
 li.dropdown {
@@ -56,7 +69,7 @@ li.dropdown {
     text-align: left;
 }
 
-.dropdown-content a:hover {background-color: #4CAF50;}
+.dropdown-content a:hover {background-color: #F9BA32;}
 
 ul.topnav li.right {float: right;}
 
@@ -74,7 +87,7 @@ ul.topnav li.right {float: right;}
 
 .row > div {
     float : left;
-    background-color: grey;
+    /*background-color: grey;*/
     margin : 0 10px;
 }
 
@@ -91,7 +104,10 @@ ul.topnav li.right {float: right;}
 
 footer {
   height: 70px;
-  background: #B2AEAE;
+  background: #426E86;
+  color: white;
+  text-align: center;
+  text-decoration: none;
   /*border-top: 1px #8B8282 solid;*/
 }
 
@@ -103,7 +119,7 @@ footer {
 .head_and_main {
   min-height: 100%;
   /* equal to footer height */
-  background: #FFFEFE;
+  background: #F8F1E5;
   margin-bottom: -70px;
 }
 
@@ -113,11 +129,11 @@ footer {
 }
 
 .site-footer, .head_and_main:after {
-  height: 69px;
+  height: 70px;
 }
 
 .site-footer {
-  border-top: 1px #8B8282 solid;
+  /*border-top: 1px #8B8282 solid;*/
   /*background: orange;*/
 }
 
@@ -139,3 +155,5 @@ footer {
 .w-10 { width : 780px; }
 .w-11 { width : 860px; }
 .w-12 { width : 940px; }
+
+.w-solid { min-height: 1px; }
