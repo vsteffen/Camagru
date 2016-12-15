@@ -34,12 +34,6 @@
         </br></br>
       </div>
     </div>
-    <footer>
-      <div class="site-footer">
-        <div class="row">
-          <div class="w-12">JE NE SAIS PAS QUOI METTRE LOL</div>
-        </div>
-      </div>
-    </footer>
+    <?php include_once 'footer.php' ?>
   </body>
 </html>

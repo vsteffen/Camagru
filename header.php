@@ -3,7 +3,7 @@
   <li><a href="global_galery.php">HALL OF FAME (or loose)</a></li>
   <?php
       if (!isset($_SESSION['login']) || $_SESSION['login'] == "") {
-        $log_bar = '<li class="right"><a href="sign_up.php">Sign up</a></li>
+        $log_bar = '<li class="right"><a href="register.php">Register</a></li>
                     <li class="right"><a href="connection.php">Login</a></li>';
       }
       else {

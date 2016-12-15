@@ -14,6 +14,12 @@ html, body {
 .camabruuu {
   font-family: 'Sugarpunch';
   font-size: 30px;
+  text-decoration: none;
+  color: white;
+}
+
+.error {
+  color: red;
 }
 
 /*<----------------- TOP NAV BAR ----------------->*/
@@ -104,10 +110,8 @@ ul.topnav li.right {float: right;}
 
 footer {
   height: 70px;
+  /*padding: 5px;*/
   background: #426E86;
-  color: white;
-  text-align: center;
-  text-decoration: none;
   /*border-top: 1px #8B8282 solid;*/
 }
 
@@ -132,9 +136,31 @@ footer {
   height: 70px;
 }
 
+/*.no-under-link {
+  color: white;
+  text-align: center;
+  text-decoration: none;
+}*/
+
 .site-footer {
+  color: white;
+  text-align: center;
+  text-decoration: none;
   /*border-top: 1px #8B8282 solid;*/
   /*background: orange;*/
+}
+
+.no-align {
+  text-align: left;
+}
+
+/*.login-before-input {
+  text-align: left;
+  margin: 0px;
+}*/
+
+div.row:nth-child(1) {
+  padding-top: 15px;
 }
 
 .sep {

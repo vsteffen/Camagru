@@ -1,19 +1,11 @@
 <?php
     if (!isset($_SESSION))
         session_start();
-    if (isset($_SESSION['rank'])) {
-      if ($_SESSION['rank'] == 2)
-          header('Location: admin.php');
-      if ($_SESSION['rank'] == 1)
-          header('Location: profile.php');
-    }
-    // if ($_POST['login'])
-    //   echo "TRES DROLE" . $_POST['login'] . " LOL 1" . PHP_EOL;
-    if (isset($_SESSION['login']) && $_SESSION['login'] != "")
+    if (!empty($_SESSION['login']))
         header('Location: profile.php');
     if (empty($_POST))
       $wrong = 0;
-    else if (empty($_POST['login']) || empty($_POST['password']))
+    else if (empty($_POST['login']) || empty($_POST['pass1']) || empty($_POST['pass2']))
       $wrong = 1;
     else {
       echo "TRES DROLE" . $_POST['login'] . " LOL 1" . PHP_EOL;
@@ -43,12 +35,11 @@
 ?>
 <html>
   <head>
-  	<title>Camagru - Login</title>
+  	<title>Camagru - Register</title>
     <link rel="stylesheet" href="./css/global.css">
   	<link rel="stylesheet" href="./css/login.css">
   </head>
   <body>
-    <!-- php include 'header.php' ?> -->
     <div class="head_and_main">
       <?php include_once 'header.php' ?>
       <div class="main">
@@ -56,8 +47,9 @@
         <div class="login">
           <div class="login-screen">
             <div class="app-title">
-              <h1>Login</h1>
+              <h1>Register</h1>
             </div>
+            <p class="no-align">You want to join our community? You just need to fill the fields below.</p>
             <?php
               if ($wrong == 1)
                 echo '<p class="no-align error">You must fill all the fields to continue</p>';
@@ -65,19 +57,22 @@
                 echo '<p class="no-align error">Incorrect login or password.</p>';
             ?>
             <div class="login-form">
-              <form action="connection.php" method="post">
+              <form action="register.php" method="post">
                 <div class="control-group">
                   <input type="text" class="login-field" name="login" value="" placeholder="Username" id="login-name">
                   <label class="login-field-icon fui-user" for="login-name"></label>
                 </div>
                 <div class="control-group">
-                  <input type="password" class="login-field" name="password" value="" placeholder="Password" id="login-pass">
+                  <input type="password" class="login-field" name="pass1" value="" placeholder="Password" id="login-pass">
                   <label class="login-field-icon fui-lock" for="login-pass"></label>
                 </div>
-                <input class="btn btn-primary btn-large btn-block" type="submit" name="submit" value="LOGIN">
-                <a class="login-link" href="#">Lost your password?</a>
+                <div class="control-group">
+                  <input type="password" class="login-field" name="pass2" value="" placeholder="Type password again" id="login-pass">
+                  <label class="login-field-icon fui-lock" for="login-pass"></label>
+                </div>
+                <input class="btn btn-primary btn-large btn-block" type="submit" name="submit" value="CREATE ACCOUNT">
                 </br>
-                <a class="login-link" href="register.php">Don't have an account ? Create one here !</a>
+                <a class="login-link" href="connection.php">Already have an account ? Log in here !</a>
               </form>
             </div>
           </div>
