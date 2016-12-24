@@ -7,38 +7,37 @@
       if ($_SESSION['rank'] == 1)
           header('Location: profile.php');
     }
-    // if ($_POST['login'])
-    //   echo "TRES DROLE" . $_POST['login'] . " LOL 1" . PHP_EOL;
     if (isset($_SESSION['login']) && $_SESSION['login'] != "")
         header('Location: profile.php');
-    if (empty($_POST))
-      $wrong = 0;
-    else if (empty($_POST['login']) || empty($_POST['password']))
-      $wrong = 1;
-    else {
-      echo "TRES DROLE" . $_POST['login'] . " LOL 1" . PHP_EOL;
-      require_once('config/database.php');
-      try
-      {
-        $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', '');
-      }
-      catch(Exception $e)
-      {
-        die('Erreur : '.$e->getMessage());
-      }
-      $dataUser = $bdd->query('SELECT * FROM users WHERE login=\'' . $_POST['login'] . '\';');
-      if ($data = $dataUsers->fetch()) {
-        if ($dataUser['login'] == $_POST['login']) {
-          if ($dataUser['password'] == hash(sha256, $_POST['password'])) {
-            $_SESSION['login'] = $dataUser['login'];
-            $_SESSION['rank'] = (int)$dataUser['droit'];
-            $users->closeCursor();
-            header('Location: index.php');
+
+    if (!empty($_POST)) {
+      $wrong = [];
+      if (empty($_POST['login']) || empty($_POST['password']))
+        $wrong[] = "You must fill all the fields to continue.";
+      else {
+        require_once('config/database.php');
+        try
+        {
+          $bdd = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
+        }
+        catch(Exception $e)
+        {
+          die('Error : '.$e->getMessage());
+        }
+        $dataUser = $bdd->query("SELECT * FROM users WHERE login='" . $_POST['login'] . "' OR mail='" . $_POST['login'] . "';");
+        if ($data = $dataUser->fetch()) {
+          if ($data['login'] == $_POST['login'] || $data['mail'] == $_POST['login'] ) {
+            if ($data['pwd'] == hash('sha256', $_POST['password'])) {
+              $_SESSION['login'] = $data['login'];
+              $_SESSION['rank'] = (int)$data['rank'];
+              $dataUser->closeCursor();
+              header('Location: index.php');
+            }
           }
         }
+        $dataUser->closeCursor();
+        $wrong[] = "Incorrect login or password.";
       }
-      $users->closeCursor();
-      $wrong = 2;
     }
 ?>
 <html>
@@ -48,7 +47,6 @@
   	<link rel="stylesheet" href="./css/login.css">
   </head>
   <body>
-    <!-- php include 'header.php' ?> -->
     <div class="head_and_main">
       <?php include_once 'header.php' ?>
       <div class="main">
@@ -59,15 +57,16 @@
               <h1>Login</h1>
             </div>
             <?php
-              if ($wrong == 1)
-                echo '<p class="no-align error">You must fill all the fields to continue</p>';
-              if ($wrong == 2)
-                echo '<p class="no-align error">Incorrect login or password.</p>';
+              if (isset($wrong)) {
+                  foreach ($wrong as $key => $value) {
+                    echo '<p class="no-align error">' . $value . '</p>';
+                  }
+              }
             ?>
             <div class="login-form">
               <form action="connection.php" method="post">
                 <div class="control-group">
-                  <input type="text" class="login-field" name="login" value="" placeholder="Username" id="login-name">
+                  <input type="text" class="login-field" name="login" value="<?php if (isset($_POST['login'])) { echo $_POST['login']; } ?>" placeholder="Username or Email" id="login-name">
                   <label class="login-field-icon fui-user" for="login-name"></label>
                 </div>
                 <div class="control-group">

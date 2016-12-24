@@ -31,6 +31,19 @@
           <div class="w-9">8</div>
           <div class="w-3">3</div>
         </div>
+        </br>
+        <?php
+          if (empty($_SESSION['login']))
+            echo "<p>Var login = EMPTY</p>";
+          else {
+            echo "<p>Var login = \"" . $_SESSION['login'] . "\"</p>";
+          }
+          if (empty($_SESSION['rank']))
+            echo "<p>Var rank = EMPTY</p>";
+          else {
+            echo "<p>Var rank = \"" . $_SESSION['rank'] . "\"</p>";
+          }
+        ?>
         </br></br>
       </div>
     </div>

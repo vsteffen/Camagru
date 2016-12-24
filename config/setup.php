@@ -13,11 +13,13 @@
 
                 USE `$DB_NAME`;
 
+                SET NAMES 'utf8';
+
                 DROP TABLE IF EXISTS `users`;
                 CREATE TABLE `users` (
                   `id` int(11) NOT NULL,
-                  `pseudo` varchar(30) NOT NULL,
-                  `pwd` varchar(32) NOT NULL,
+                  `login` varchar(30) NOT NULL,
+                  `pwd` varchar(64) NOT NULL,
                   `mail` varchar(100) NOT NULL,
                   `avatar` varchar(100) NOT NULL,
                   `localisation` varchar(100) NOT NULL,
@@ -30,7 +32,15 @@
                   ADD PRIMARY KEY (`id`);
 
                 ALTER TABLE `users`
-                  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;";
+                  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+                INSERT INTO `users` (`id`, `login`, `pwd`, `mail`, `avatar`, `localisation`, `register`, `last_log`, `rank`) VALUES
+                  (NULL, 'admin', 'd74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1', 'admin@camagru.com', '', 'Paris', '1', '1', '2'),
+                  (NULL, 'member1', 'd74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1', 'member1@member.com', '', 'Créteil', '1', '1', '1'),
+                  (NULL, 'member2', 'd74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1', 'member2@member.com', '', 'DoudouLand', '1', '1', '1');
+
+
+                ";
 
       $dbh->exec($query);
       echo "DB installed successfully" . PHP_EOL;
