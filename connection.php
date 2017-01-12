@@ -35,7 +35,6 @@ function checkStatus($status, &$errors, $mail) {
         {
           die('Error : '.$e->getMessage());
         }
-        echo hash('sha256', $_POST['password']);
         $dataUser = $bdd->query("SELECT * FROM users WHERE login='" . $_POST['login'] . "' OR mail='" . $_POST['login'] . "';");
         if ($data = $dataUser->fetch()) {
           if (empty(checkStatus($data['status'], $wrong, $data['mail']))) {
