@@ -1,4 +1,15 @@
 <?php
+
+function checkStatus($status, &$errors, $mail) {
+  if ($status == 0) {
+    $errors[] = "Your email address hasn't been validated, an email has been sent to the following address: " . $mail . ".</br>Please follow the instructions to confirm your email address.";
+  }
+  else if ($status == 2) {
+    $errors[] = "Your account is blocked, please contact the support team for more information (camagru.support@XXX.com)";
+  }
+  return ($errors);
+}
+
     if (!isset($_SESSION))
         session_start();
     if (isset($_SESSION['rank'])) {
@@ -24,19 +35,25 @@
         {
           die('Error : '.$e->getMessage());
         }
+        echo hash('sha256', $_POST['password']);
         $dataUser = $bdd->query("SELECT * FROM users WHERE login='" . $_POST['login'] . "' OR mail='" . $_POST['login'] . "';");
         if ($data = $dataUser->fetch()) {
-          if ($data['login'] == $_POST['login'] || $data['mail'] == $_POST['login'] ) {
-            if ($data['pwd'] == hash('sha256', $_POST['password'])) {
-              $_SESSION['login'] = $data['login'];
-              $_SESSION['rank'] = (int)$data['rank'];
-              $dataUser->closeCursor();
-              header('Location: index.php');
+          if (empty(checkStatus($data['status'], $wrong, $data['mail']))) {
+            if ($data['login'] == $_POST['login'] || $data['mail'] == $_POST['login'] ) {
+              if ($data['pwd'] == hash('sha256', $_POST['password'])) {
+                $_SESSION['login'] = $data['login'];
+                $_SESSION['rank'] = (int)$data['rank'];
+                $dataUser->closeCursor();
+                header('Location: index.php');
+              }
             }
           }
+          else
+            $statusKO = 1;
         }
         $dataUser->closeCursor();
-        $wrong[] = "Incorrect login or password.";
+        if (!isset($statusKO))
+          $wrong[] = "Incorrect login or password.";
       }
     }
 ?>
@@ -50,7 +67,7 @@
     <div class="head_and_main">
       <?php include_once 'header.php' ?>
       <div class="main">
-        </br></br></br>
+        </br></br>
         <div class="login">
           <div class="login-screen">
             <div class="app-title">

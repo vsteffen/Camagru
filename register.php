@@ -47,14 +47,32 @@ function checkLogin($login, &$errors) {
       {
         die('Erreur : '.$e->getMessage());
       }
-      if ($bdd->query("SELECT COUNT(*) FROM `users` WHERE mail='" . $_POST['mail'] . "'")->fetchColumn())
-        $wrong[] = "This email is already associated with an account.";
-      if ($bdd->query("SELECT COUNT(*) FROM `users` WHERE login='" . $_POST['login'] . "'")->fetchColumn())
-        $wrong[] = "Username is already taken.";
+      $is_taken = $bdd->query("SELECT * FROM `users` WHERE login='" . $_POST['login'] . "' OR mail='" . $_POST['mail'] . "';");
+      while ($dataTaken = $is_taken->fetch()) {
+        if (!isset($takenMail) && $dataTaken['mail'] == $_POST['mail']) {
+          $wrong[] = "This email is already associated with an account.";
+          $takenMail = 1;
+        }
+        if (!isset($takenLogin) && $dataTaken['login'] == $_POST['login']) {
+          $wrong[] = "Username is already taken.";
+          $takenLogin = 1;
+        }
+        if (!isset($takenActivated) && $dataTaken['status'] == 0) {
+          $wrong[] = "This account isn't active and will be deleted in the next 24 hours after the creation of the account if we have no confirmation by a message who has been sent at \"" . $dataTaken['mail'] . "\".";
+          $takenActivated = 1;
+        }
+      }
+      $is_taken->closeCursor();
+
+      // if ($bdd->query("SELECT COUNT(*) FROM `users` WHERE mail='" . $_POST['mail'] . "'")->fetchColumn())
+        // $wrong[] = "This email is already associated with an account.";
+      // if ($bdd->query("SELECT COUNT(*) FROM `users` WHERE login='" . $_POST['login'] . "'")->fetchColumn())
+        // $wrong[] = "Username is already taken.";
+
       if (empty($wrong)) {
-        $NewUser = $bdd->exec("INSERT INTO `users` (`id`, `login`, `pwd`, `mail`, `avatar`, `localisation`, `register`, `last_log`, `rank`) VALUES (NULL, '" . $_POST['login'] . "', '" . hash('sha256', $_POST['pass1']) . "', '" . $_POST['mail'] . "', '', '', 0, UTC_TIME(), '1');");
+        $NewUser = $bdd->exec("INSERT INTO `users` (`id_user`, `login`, `pwd`, `mail`, `avatar`, `localisation`, `status`, `last_log`, `rank`) VALUES (NULL, '" . $_POST['login'] . "', '" . hash('sha256', $_POST['pass1']) . "', '" . $_POST['mail'] . "', '', '', 0, UTC_TIME(), '1');");
           if ($NewUser == 1)
-              header('Location: register_success.php');
+              header('Location: register_success.php?register=OK&login=' . $_POST['login']. '&mail=' . $_POST['mail'] .'');
           $wrong[] = "Unknown error while registering you in database, please contact Webmaster to report the bug encountered.";
       }
     }

@@ -23,13 +23,16 @@
       <div class="main">
         </br></br></br></br>
         <div class="row">
-          <div class="w-9">8</div>
+          <div class="w-7">7</div>
+          <div class="w-2">2</div>
           <div class="w-3">3</div>
         </div>
-        </br></br></br></br>
-        <div class="row">
-          <div class="w-9">8</div>
-          <div class="w-3">3</div>
+        </br></br>
+        <div class="basic-page">
+          <p>JE SUIS UNE PAGE BASIC LOL</br></br></p>
+          <p>JE SUIS UNE PAGE BASIC LOL</br></br></p>
+          <p>JE SUIS UNE PAGE BASIC LOL</br></br></p>
+          <p>JE SUIS UNE PAGE BASIC LOL</br></br></p>
         </div>
         </br>
         <?php

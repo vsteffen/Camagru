@@ -4,7 +4,40 @@ html, body {
     width: 100%;
     min-width: 960px;
     margin: 0;
+    font-family:'Open Sans', Helvetica, Arial;
 }
+
+/*<----------------- BASIC PAGE ----------------->*/
+
+.basic-page {
+  position: relative;
+  z-index: 1;
+  background: #FFFFFF;
+  width: 940px;
+  padding: 20px;
+  margin: 10px auto;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  text-align: center;
+  /*border: 1px solid gray;*/
+
+border: 1px solid rgba(0, 0, 0, 0.15);
+
+  /*-webkit-box-shadow: 0px 0px 25px -1px rgba(0,0,0,0.13);
+  -moz-box-shadow: 0px 0px 25px -1px rgba(0,0,0,0.13);
+  box-shadow: 0px 0px 25px -1px rgba(0,0,0,0.13);*/
+
+
+  /*box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1), 0 2px 2px 0 rgba(0, 0, 0, 0.1);*/
+}
+
+.basic-page p {
+  font-size: 17px;
+}
+
+/*<----------------- END OF BASIC PAGE ----------------->*/
+
+/*<----------------- CAMAGRU POLICE ----------------->*/
 
 @font-face {
     font-family: 'Sugarpunch';
@@ -21,6 +54,8 @@ html, body {
 .error {
   color: red;
 }
+
+/*<----------------- END OF CAMAGRU POLICE ----------------->*/
 
 /*<----------------- TOP NAV BAR ----------------->*/
 
