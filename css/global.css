@@ -37,6 +37,83 @@ border: 1px solid rgba(0, 0, 0, 0.15);
 
 /*<----------------- END OF BASIC PAGE ----------------->*/
 
+#photoTaken {
+  float:left;
+  margin-left;
+  width: 220px;
+  background: #DDD;
+  margin: 0 auto;
+  margin-left: 20px;
+  padding: 10px;
+  padding-top: 0;
+}
+
+#photoTaken img {
+  height: 165px;
+  width: 220px;
+  margin-top: 10px
+  /*padding: 10px;*/
+
+}
+
+#photoSection {
+  float: left;
+  width: 700px;
+  background: #DDD;
+  margin: 0 auto;
+  padding-top: 30px;
+}
+
+.filter-select {
+  /*list-style: none;*/
+  padding: 0;
+  margin-left: 1px;
+  /*margin-right: 0px;*/
+}
+
+.filter-select img {
+  /*margin-left: 35px;
+  margin-bottom: 30px;*/
+   height: 165px;
+   width: 220px;
+}
+
+#pick {
+  background: yellow;
+}
+
+.filterCase {
+  float: left;
+  margin-left: 2px;
+  margin-bottom: 3px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  padding: 5px;
+  /*background: #DC9A0A;*/
+}
+
+.filterCaseSelected {
+  background: #F9BA32;
+}
+
+#filterActive {
+  position: absolute;
+  margin-left: 30px;
+  z-index: 3;
+}
+
+#videoDiv {
+  position: relative;
+}
+
+#video {
+  margin-left: 30px;
+  margin-bottom: 30px;
+  /*position: relative;*/
+}
+
+
 /*<----------------- CAMAGRU POLICE ----------------->*/
 
 @font-face {
@@ -139,14 +216,17 @@ ul.topnav li.right {float: right;}
 }*/
 
 .main {
+  margin : 0 auto;
   height: auto;
-  width: 100%;
+  /*width: 100%;*/
+  width : 960px;
 }
 
 footer {
   height: 70px;
   /*padding: 5px;*/
   background: #426E86;
+  clear: both;
   /*border-top: 1px #8B8282 solid;*/
 }
 
@@ -187,6 +267,11 @@ footer {
 
 .no-align {
   text-align: left;
+}
+
+.app-title {
+text-align: center;
+color: #777;
 }
 
 /*.login-before-input {

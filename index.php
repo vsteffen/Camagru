@@ -21,7 +21,7 @@
         <!-- </div> -->
       <!-- </div> -->
       <div class="main">
-        </br></br></br></br>
+        </br></br>
         <div class="row">
           <div class="w-7">7</div>
           <div class="w-2">2</div>

@@ -13,11 +13,6 @@ input:focus {
     outline-width: 0;
 }
 
-.app-title {
-text-align: center;
-color: #777;
-}
-
 .login-form {
 text-align: center;
 }

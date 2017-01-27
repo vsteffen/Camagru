@@ -15,6 +15,8 @@
 
                 SET NAMES 'utf8';
 
+    # ---------------  USERS TABLE ---------------
+
                 DROP TABLE IF EXISTS `users`;
                 CREATE TABLE `users` (
                   `id_user` int(11) NOT NULL,
@@ -39,6 +41,8 @@
                   (NULL, 'member2', 'd74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1', 'member2@member.com', '', 'DoudouLand', 1, '1', '1');
 
 
+    # ---------------  TOKENS TABLE---------------
+
                 DROP TABLE IF EXISTS `tokens`;
                 CREATE TABLE `tokens` (
                   `id_token` int(11) NOT NULL,
@@ -56,6 +60,52 @@
                 ALTER TABLE `tokens`
                   ADD CONSTRAINT fk_tokens_user FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE;
 
+
+    # ---------------  SNAPSHOTS TABLE ---------------
+
+                DROP TABLE IF EXISTS `snapshots`;
+                CREATE TABLE `snapshots` (
+                  `id_snap` int(11) NOT NULL,
+                  `timestamps` int(11) NOT NULL,
+                  `thumbs_up` int(11) NOT NULL,
+                  `thumbs_down` int(11) NOT NULL,
+                  `scope` tinyint(4) NOT NULL,
+                  `id_user` int(11) NOT NULL
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+                ALTER TABLE `snapshots`
+                  ADD PRIMARY KEY (`id_snap`);
+                ALTER TABLE `snapshots`
+                  MODIFY `id_snap` int(11) NOT NULL AUTO_INCREMENT;
+
+                ALTER TABLE `snapshots`
+                  ADD CONSTRAINT fk_snapshots_user FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE;
+
+
+    # --------------- POSTS TABLE---------------
+
+                DROP TABLE IF EXISTS `posts`;
+                CREATE TABLE `posts` (
+                  `id_post` int(11) NOT NULL,
+                  `text` varchar(250) NOT NULL,
+                  `timestamps` int(11) NOT NULL,
+                  `id_snap` int(11) NOT NULL,
+                  `id_user` int(11) NOT NULL
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+                ALTER TABLE `posts`
+                  ADD PRIMARY KEY (`id_post`);
+                ALTER TABLE `posts`
+                  MODIFY `id_post` int(11) NOT NULL AUTO_INCREMENT;
+
+                ALTER TABLE `posts`
+                  ADD CONSTRAINT fk_posts_user FOREIGN KEY (id_user) REFERENCES users(id_user);
+
+                ALTER TABLE `posts`
+                  ADD CONSTRAINT fk_posts_snap FOREIGN KEY (id_snap) REFERENCES snapshots(id_snap) ON DELETE CASCADE;
+
+
+    # ---------------  EVENTS ---------------
 
                 SET GLOBAL EVENT_SCHEDULER = ON;
 

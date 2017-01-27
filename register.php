@@ -71,9 +71,11 @@ function checkLogin($login, &$errors) {
 
       if (empty($wrong)) {
         $NewUser = $bdd->exec("INSERT INTO `users` (`id_user`, `login`, `pwd`, `mail`, `avatar`, `localisation`, `status`, `last_log`, `rank`) VALUES (NULL, '" . $_POST['login'] . "', '" . hash('sha256', $_POST['pass1']) . "', '" . $_POST['mail'] . "', '', '', 0, UTC_TIME(), '1');");
-          if ($NewUser == 1)
-              header('Location: register_success.php?register=OK&login=' . $_POST['login']. '&mail=' . $_POST['mail'] .'');
-          $wrong[] = "Unknown error while registering you in database, please contact Webmaster to report the bug encountered.";
+        if ($NewUser == 1) {
+          mkdir("./image/login/" . $_POST['login'], 0700);
+          header('Location: register_success.php?register=OK&login=' . $_POST['login']. '&mail=' . $_POST['mail'] .'');
+        }
+        $wrong[] = "Unknown error while registering you in database, please contact Webmaster to report the bug encountered.";
       }
     }
   }

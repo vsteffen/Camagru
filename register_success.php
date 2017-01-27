@@ -41,6 +41,15 @@
   }
   $dataUser->closeCursor();
 
+// ---------------- GET TOKEN
+  $token_query = $bdd->query("SELECT * FROM `tokens` WHERE `usage` = 0 AND `id_user` = " . $id_user . ";");
+  if ($dataToken = $token_query->fetch()) {
+    $token = $dataToken['content'];
+    $tokenExist = 1;
+  }
+  else
+    $token = bin2hex(openssl_random_pseudo_bytes(16));
+  $token_query->closeCursor();
 
 // ---------------- MAIL --------------
   require_once('./PHPMailer/class.phpmailer.php');
@@ -66,7 +75,6 @@
   $mail->SetFrom("camagru@cor-nebula.space");
   $mail->Subject = "Welcome to Camagru";
 
-  $token = bin2hex(openssl_random_pseudo_bytes(16));
   $addressMail = $_GET['mail'];
 
   $mail->Body = "<div style=\"min-width: 500px;margin-right:auto;text-decoration: none;font-family:'Open Sans', Helvetica, Arial;color: black;\">
@@ -115,8 +123,7 @@
     $error[] = "There was an error when sending the email. Please contact support for more information with the following debug message : " . PHP_EOL . "Mailer Error: " . $mail->ErrorInfo;
    }
    else {
-     $token_query = $bdd->query("SELECT * FROM `tokens` WHERE `usage` = 0 AND `id_user` = " . $id_user . ";");
-     if (!$dataToken = $token_query->fetch()) {
+     if (!isset($tokenExist)) {
        if (!$bdd->exec("INSERT INTO `tokens` (`id_token`, `usage`, `content`, `expires`, `id_user`) VALUES (NULL, '0', '" . $token . "', NOW() + INTERVAL 24 HOUR, '" . $id_user . "');"))
         $error[] = "Error with the database. Please contact the support team.";
      }
@@ -139,28 +146,26 @@
       <?php include_once 'header.php' ?>
       <div class="main">
       </br></br>
-        <div class="login">
-          <div class="basic-page">
-            <div class="app-title">
-              <?php
-                if (isset($error))
-                  echo "<h1>Oops something went wrong !</h1>";
-                else
-                  echo "<h1>You have been successfully registered !</h1>";
-              ?>
-            </div>
+        <div class="basic-page">
+          <div class="app-title">
             <?php
-              if (isset($error)) {
-                foreach ($error as $key => $value) {
-                  echo '<p class="no-align error">' . $value . '</p>';
-                }
-                echo '<p class="no-align">DEBUG : If you encountered an error when sending the email(which may be possible !!!), you can go to the page <a href="debug.php">DEBUG</a> and manually enter your login to make your account active</p>';
-              }
-              else {
-                echo '<p class="no-align">We sent you a message to your email asking you to validate your email (' . $_GET['mail'] . '). If it\'s not validated before the next 24 hours, your account will be deleted and available again.</p>';
-              }
+              if (isset($error))
+                echo "<h1>Oops something went wrong !</h1>";
+              else
+                echo "<h1>You have been successfully registered !</h1>";
             ?>
           </div>
+          <?php
+            if (isset($error)) {
+              foreach ($error as $key => $value) {
+                echo '<p class="no-align error">' . $value . '</p>';
+              }
+              echo '<p class="no-align">DEBUG : If you encountered an error when sending the email(which may be possible !!!), you can go to the page <a href="debug.php">DEBUG</a> and manually enter your login to make your account active</p>';
+            }
+            else {
+              echo '<p class="no-align">We sent you a message to your email asking you to validate your email (' . $_GET['mail'] . '). If it\'s not validated before the next 24 hours, your account will be deleted and your mail, your username will be available again.</p>';
+            }
+          ?>
         </div>
       </br></br>
       </div>
