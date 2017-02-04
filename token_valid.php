@@ -23,6 +23,9 @@
     if ($data['usage'] == 0) {
       $bdd->exec("UPDATE `users` SET `status` = '1' WHERE `users`.`id_user` = " . $data['id_user'] . ";");
       $bdd->exec("DELETE FROM `tokens` WHERE `tokens`.`id_token` = " . $data['id_token']. ";");
+      $user = $bdd->query("SELECT `login` FROM `users` WHERE `id_user` = " . $data['id_token']);
+      $dataUser = $user->fetch();
+      mkdir("./image/login/" . $dataUser['login'], 0700);
       header('Location: account_active.php');
       $headerLocSend = 1;
     }

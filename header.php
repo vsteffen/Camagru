@@ -1,6 +1,5 @@
 <ul class="topnav">
-  <li><a class="camabruuu" href="index.php">CAMABRUUUUUUU</a></li>
-  <li><a href="global_galery.php">HALL OF FAME (or loose)</a></li>
+  <li><a class="camabruuu" href="index.php">CAMAGRU</a></li>
   <?php
       if (!isset($_SESSION['login']) || $_SESSION['login'] == "") {
         $log_bar = '<li class="right"><a href="register.php">Register</a></li>
@@ -14,7 +13,8 @@
                         <a href="account_settings.php">Settings</a>
                         <a href="logout.php">Logout</a>
                       </div>
-                    </li>';
+                    </li>
+                    <li class="right"><a href="take_snapshot.php">Take a pic!</a></li>';
       }
       echo $log_bar;
   ?>

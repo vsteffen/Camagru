@@ -1,4 +1,12 @@
-<?php define("FILTER_ROOT", "./image/filter/", true);?>
+<?php
+  define("FILTER_ROOT", "./image/filter/", true);
+
+  if (!isset($_SESSION))
+      session_start();
+
+  if (!isset($_SESSION['id_user']) || empty($_SESSION['id_user']))
+    header('Location: connexion.php');
+?>
 <html>
   <head>
   	<title>Camagru - Login</title>
@@ -9,40 +17,32 @@
     <div class="head_and_main">
       <?php include_once 'header.php' ?>
       <div class="main">
-        </br></br>
-        <!-- <div class="row"> -->
-          <!-- <div class="w-7"> -->
-          <div id="photoSection">
-            <div class="videoDiv">
-              <img id="filterActive" src="">
-              <video id="video"></video>
+        <div id="photoSection" class="basic-page">
+          <div class="videoDiv">
+            <img id="filterActive" src="" class="hidden">
+            <video id="video"></video>
+          </div>
+          <button class="btnClassic" id="startbutton">TAKE A PIC!</button>
+          <canvas style="display: none" id="canvas"></canvas>
+          <div>
+            <input type="file" name="image">
+          </div>
+          <button class="btnClassic" type="submit">SEND</button>
+          <!-- <form action="#" method="post" enctype="multipart/form-data"> -->
+            <div class="filter-select">
+              <div class="filterCase filterCaseSelected"><img id="filter0" src="<?php echo FILTER_ROOT; ?>noFilter.png"></div>
+              <div class="filterCase"><img id="filter1" src="<?php echo FILTER_ROOT; ?>cadre.png"></div>
+              <div class="filterCase"><img id="filter2" src="<?php echo FILTER_ROOT; ?>laurier.png"></div>
+              <div class="filterCase"><img id="filter3" src="<?php echo FILTER_ROOT; ?>banner.png"></div>
+              <div class="filterCase"><img id="filter4" src="<?php echo FILTER_ROOT; ?>love.png"></div>
+              <div class="filterCase"><img id="filter5" src="<?php echo FILTER_ROOT; ?>cloud.png"></div>
             </div>
-            <button id="startbutton">Prendre une photo</button>
-            <canvas style="display: none" id="canvas"></canvas>
-            <form action="#" method="post" enctype="multipart/form-data">
-              <div class="filter-select">
-                <div class="filterCase filterCaseSelected"><img id="filter0" src="<?php echo FILTER_ROOT; ?>noFilter.png"></div>
-                <div class="filterCase"><img id="filter1" src="<?php echo FILTER_ROOT; ?>cadre.png"></div>
-                <div class="filterCase"><img id="filter2" src="<?php echo FILTER_ROOT; ?>laurier.png"></div>
-                <div class="filterCase"><img id="filter3" src="<?php echo FILTER_ROOT; ?>banner.png"></div>
-                <div class="filterCase"><img id="filter4" src="<?php echo FILTER_ROOT; ?>love.png"></div>
-                <div class="filterCase"><img id="filter5" src="<?php echo FILTER_ROOT; ?>cloud.png"></div>
-              </div>
-              <div>
-                <input type="file" name="image">
-              </div>
-              <button type="submit">Envoyer</button>
-            </form>
-          </div>
-          <!-- <div class="w-2 w-solid"></div> -->
-          <!-- <div class="w-3"> -->
-          <div id="photoTaken">
-            <p>The snapshots will appear here!</p>
-          </div>
+          <!-- </form> -->
         </div>
-          <!-- </div> -->
-        <!-- </div> -->
-      <!-- </div> -->
+        <div id="photoTaken" class="basic-page">
+          <p>The picture will appear here!</p>
+        </div>
+      </div>
     </div>
     <?php include_once 'footer.php' ?>
   </body>
@@ -65,6 +65,8 @@
           filterPath    = "",
           width			    = 640,
           height			  = 0;
+
+        var ajaxUpload;
 
         navigator.getMedia	= ( navigator.getUserMedia ||
                   navigator.webkitGetUserMedia ||
@@ -102,46 +104,58 @@
           }
         }, false);
 
-        function addImageToWebsite(imgPath, imgId) {
+        function addImageToWebsite(imgPath, imgId, imgPrimId) {
           var img = document.createElement("img");
           img.src = imgPath;
-          img.id = imgId;
+          img.id = imgPrimId;
+
+          var a = document.createElement("a");
+          a.href = "see_snap.php?idPrimSnap=" + imgPrimId;
+
           if (firstSnap == 1)
           {
             photoTaken.innerHTML = "";
             firstSnap = 0;
           }
-          photoTaken.insertBefore(img, photoTaken.childNodes[0]);
+          photoTaken.insertBefore(a, photoTaken.childNodes[0]);
+          a.appendChild(img);
         }
 
-        function takepicture() {
+        function upload(data, filterPath, callback) {
+          $.ajax({
+              type: "POST",
+              url: 'snapshotMerge.php',
+              dataType: 'json',
+              // cache: false,
+              data: {
+                imgBase64: data,
+                filterPath: filterPath
+              },
+              success: callback
+          });
+        }
+
+        function getUploadData(callback) {
           canvas.width = width;
           canvas.height = height;
           canvas.getContext('2d').drawImage(video, 0, 0, width, height);
           var data = canvas.toDataURL('image/png');
 
-          $.ajax({
-              type: 'POST',
-              url: 'snapshotMerge.php',
-              data: {
-                imgBase64: data,
-                filterPath: filterPath
-              },
-              contentType: "image/png",
-              success: function(response){
-                  data = "data:image/png;base64," + response;
-                  console.log(response);
-
-              }
+          upload(data, filterPath, function(response) {
+            ajaxUpload = response;
+            if (ajaxUpload.key1 == 1) {
+              console.log("Success while uploading the picture.");
+              addImageToWebsite(ajaxUpload.key2, ajaxUpload.key3, ajaxUpload.key4);
+            }
+            else {
+              console.log(ajaxUpload.key2);
+              alert(ajaxUpload.key1 + "An error occured while uploading the picture. Please contact the support to help you or keep up to date on our twitter!");
+            }
           });
-
-          addImageToWebsite(data, "12345");
-          // console.log(data);
         }
 
-
         startbutton.addEventListener('click', function(ev){
-          takepicture();
+          getUploadData();
         }, false);
 
         filterSelect.addEventListener("click", changeFilter, false);
@@ -159,10 +173,13 @@
                 {
                   filterPath = node.getAttribute("src");
                   filterActive.setAttribute("src", filterPath);
+                  filterActive.className = "";
                 }
                 else
                 {
                   filterActive.setAttribute("src", "");
+                  filterActive.className = "hidden";
+                  filterPath = "";
                 }
                 node.parentNode.className = "filterCase filterCaseSelected";
             }

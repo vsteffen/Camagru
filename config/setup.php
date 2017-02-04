@@ -1,4 +1,13 @@
 <?php
+function delTree($dir) {
+   $files = array_diff(scandir($dir), array('.','..'));
+    foreach ($files as $file) {
+      (is_dir("$dir/$file")) ? delTree("$dir/$file") : unlink("$dir/$file");
+    }
+    return rmdir($dir);
+  }
+
+
   require_once("./database.php");
 
   try {
@@ -66,7 +75,9 @@
                 DROP TABLE IF EXISTS `snapshots`;
                 CREATE TABLE `snapshots` (
                   `id_snap` int(11) NOT NULL,
-                  `timestamps` int(11) NOT NULL,
+                  `path` varchar(50) NOT NULL,
+                  `id_snap_of_user` int(11) NOT NULL,
+                  `timestamps` DATETIME NOT NULL,
                   `thumbs_up` int(11) NOT NULL,
                   `thumbs_down` int(11) NOT NULL,
                   `scope` tinyint(4) NOT NULL,
@@ -88,7 +99,7 @@
                 CREATE TABLE `posts` (
                   `id_post` int(11) NOT NULL,
                   `text` varchar(250) NOT NULL,
-                  `timestamps` int(11) NOT NULL,
+                  `timestamps` DATETIME NOT NULL,
                   `id_snap` int(11) NOT NULL,
                   `id_user` int(11) NOT NULL
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -103,6 +114,23 @@
 
                 ALTER TABLE `posts`
                   ADD CONSTRAINT fk_posts_snap FOREIGN KEY (id_snap) REFERENCES snapshots(id_snap) ON DELETE CASCADE;
+
+
+    # --------------- POSTS TABLE---------------
+
+                DROP TABLE IF EXISTS `thumbs`;
+                CREATE TABLE `thumbs` (
+                  `upOrDown` tinyint(2) NOT NULL,
+                  `id_snap` int(11) NOT NULL,
+                  `id_user` int(11) NOT NULL
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+                ALTER TABLE `thumbs`
+                  ADD CONSTRAINT fk_thumbs_user FOREIGN KEY (id_user) REFERENCES users(id_user);
+
+                ALTER TABLE `thumbs`
+                  ADD CONSTRAINT fk_thumbs_snap FOREIGN KEY (id_snap) REFERENCES snapshots(id_snap) ON DELETE CASCADE;
+
 
 
     # ---------------  EVENTS ---------------
@@ -122,6 +150,11 @@
 // INSERT INTO `tokens` (`id_token`, `usage`, `content`, `expires`, `id_user`) VALUES (NULL, '0', 'hsdjhfdsjfhsj', '2017-01-11 00:00:00', '1'), (NULL, '2', 'hjdhjghfdjghfj', '2017-01-11 00:00:00', '2'), (NULL, '0', 'sjkdfjksdkjkf', '2017-01-13 00:00:00', '3');
 
       $dbh->exec($query);
+      delTree("../image/login");
+      mkdir("../image/login");
+      mkdir("../image/login/admin");
+      mkdir("../image/login/FFPsyko");
+      mkdir("../image/login/member2");
       echo "DB installed successfully" . PHP_EOL;
   }
   catch (PDOException $e) {

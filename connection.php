@@ -42,6 +42,7 @@ function checkStatus($status, &$errors, $mail) {
               if ($data['pwd'] == hash('sha256', $_POST['password'])) {
                 $_SESSION['login'] = $data['login'];
                 $_SESSION['rank'] = (int)$data['rank'];
+                $_SESSION['id_user'] = $data['id_user'];
                 $dataUser->closeCursor();
                 header('Location: index.php');
               }
