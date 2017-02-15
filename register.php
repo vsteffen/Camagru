@@ -30,7 +30,7 @@ function checkLogin($login, &$errors) {
     if (!isset($_SESSION))
         session_start();
     if (!empty($_SESSION['login']))
-        header('Location: profile.php');
+        header('Location: index.php');
     if (!empty($_POST)) {
       $wrong = [];
     if (empty($_POST['login']) || empty($_POST['pass1']) || empty($_POST['pass2'] || empty($_POST['mail'])))
@@ -72,7 +72,7 @@ function checkLogin($login, &$errors) {
       if (empty($wrong)) {
         $NewUser = $bdd->exec("INSERT INTO `users` (`id_user`, `login`, `pwd`, `mail`, `avatar`, `localisation`, `status`, `last_log`, `rank`) VALUES (NULL, '" . $_POST['login'] . "', '" . hash('sha256', $_POST['pass1']) . "', '" . $_POST['mail'] . "', '', '', 0, UTC_TIME(), '1');");
         if ($NewUser == 1) {
-          mkdir("./image/login/" . $_POST['login'], 0700);
+          // mkdir("./image/login/" . $_POST['login'], 0700);
           header('Location: register_success.php?register=OK&login=' . $_POST['login']. '&mail=' . $_POST['mail'] .'');
         }
         $wrong[] = "Unknown error while registering you in database, please contact Webmaster to report the bug encountered.";
@@ -125,6 +125,7 @@ function checkLogin($login, &$errors) {
                 <input class="btn btn-primary btn-large btn-block" type="submit" name="submit" value="CREATE ACCOUNT">
                 </br>
                 <a class="login-link" href="connection.php">Already have an account ? Log in here !</a>
+                <a class="login-link" href="reset_password.php">Lost your password ? Reset it here !</a>
               </form>
             </div>
           </div>

@@ -11,8 +11,7 @@
 
   if (!isset($_SESSION))
       session_start();
-  if (!isset($_SESSION['id_user']) || empty($_SESSION['id_user']))
-    header('Location: connexion.php');
+
   if (!isset($_GET) || empty($_GET['idPrimSnap']))
     header('Location: index.php');
   else {
@@ -33,7 +32,7 @@
       $scopeOk = 0;
       if ($scopeSnap == 0)
       {
-        if (isset($_SESSION['id_user']) && $_SESSION['id_user'] == $snapData['id_user'])
+        if ((isset($_SESSION['id_user']) && $_SESSION['id_user'] == $snapData['id_user']) || $_SESSION['rank'] == 2)
           $scopeOk = 1;
       }
       else if ($scopeSnap == 1) {
@@ -50,6 +49,7 @@
         $author = $loginData['login'];
         $userSnap->closeCursor();
 
+        $title = $snapData['title'];
         $path = $snapData['path'];
         $timestamps = $snapData['timestamps'];
         $thumbs_up = $snapData['thumbs_up'];
@@ -85,26 +85,55 @@
               echo "<div id='setVisibilityPrivate' class='hidden'></div>";
               echo "<div id='setVisibilityMembers' class='hidden'></div>";
               echo "<div id='setVisibilityEveryone' class='hidden'></div>";
+              echo "<input  id=\"inputSetTitle\" class='hidden'>";
+              echo "<button id=\"submitSetTitle\" class='hidden'></button>";
             }
             else {
-              echo "<div id='seeSnap'>
-                      <span id='seeSnapAuthor'>Author : " . $author . "</span></br>
-                      <img id='imgSeeSnap' src='". $path . "'></br>
-                      <div id='timestampsSeeSnap'>
-                        Uploaded date : " . $timestamps . "
+              echo "<div id='seeSnap'>";
+              if (!empty($title)) {
+                echo "<span id='seeSnapTitle'>Title : " . $title . "</span>";
+                echo "<a class='authorHref toRight' href='galery_user.php?user=" . $author . "'<span id='seeSnapAuthor'>Author : " . $author . "</span></br></a>";
+              }
+              else {
+                echo "<a class='authorHref' href='galery_user.php?user=" . $author . "'<span id='seeSnapAuthor'>Author : " . $author . "</span></br></a>";
+              }
+              echo "<img id='imgSeeSnap' src='". $path . "'></br>
+                    <div id='timestampsSeeSnap'>
+                      Uploaded date : " . $timestamps . "
+                    </div>
+                    <div id='thumbSeeSnap'>
+                      <a href='javascript:;' id='link_thumb_up'><img src='./image/ressource/thumb_up.png'></a>  <span id='thumb_up'>" . $thumbs_up . "</span>
+                      <a href='javascript:;' id='link_thumb_down'><img src='./image/ressource/thumb_down.png'></a>  <span id='thumb_down'>" . $thumbs_down . "</span></br>
+                    </div>
+                  </div></br>";
+              echo "<form action=\"twitterApi.php\" method=\"post\">
+                      <div id=\"sectionTweet\">
+                        <span>Tweet this picture :</span></br></br>
+                        <textarea id=\"textTweet\" name=\"textTweet\" placeholder=\"Your tweet text! (Limited to 140 characters or he can be empty)\" maxlength=\"140\"></textarea>
+                        <button id=\"submitTweet\" class=\"btnClassic\">SEND TWEET</button>
+                        <input type=\"hidden\" name=\"id_snap_to_tweet\" value=\"" . $_GET['idPrimSnap'] . "\">
                       </div>
-                      <div id='thumbSeeSnap'>
-                        <a href='javascript:;' id='link_thumb_up'><img src='./image/ressource/thumb_up.png'></a>  <span id='thumb_up'>" . $thumbs_up . "</span>
-                        <a href='javascript:;' id='link_thumb_down'><img src='./image/ressource/thumb_down.png'></a>  <span id='thumb_down'>" . $thumbs_down . "</span></br>
-                      </div>
+                    </form>
+                    </br></br>";
+            if ($author == $_SESSION['login'] || $_SESSION['rank'] == 2) {
+              echo "<div id ='tweetSepPost' class='sepPost'></div>";
+              echo "<div id=\"settingsSnapshot\">";
+              echo "<div id='setTitle'>
+                      <span>Set title :</span>
+                      <input  id=\"inputSetTitle\" type=\"text\" name=\"inputSetTitle\" value=\"\" placeholder=\"Title\">
+                      <button id=\"submitSetTitle\" class=\"btnClassic\">RENAME</button>
                     </div></br>";
-            if ($author == $_SESSION['login']) {
               echo "<div id='visibility'>
-                      Set visibility :
+                      <span>Set visibility :</span>
                       <button id=\"setVisibilityPrivate\" class=\"btnClassic\">PRIVATE</button>
                       <button id=\"setVisibilityEveryone\" class=\"btnClassic\">EVERYONE</button>
                       <button id=\"setVisibilityMembers\" class=\"btnClassic\">MEMBERS</button>
                     </div></br>";
+              echo "<div id='delete'>
+                      <span>Delete account :</span>
+                      <button id=\"deleteSnapshot\" class=\"btnClassic\">DELETE</button>
+                    </div></br>";
+              echo "</div>";
             }
             echo "<div id ='firstSepPost' class='sepPost'></div>";
 
@@ -140,7 +169,7 @@
             }
             if (empty($error) && empty($_SESSION['id_user'])) {
               echo "<div id='mustConnect'>
-              <p>You must <a href='connexion.php'>connect</a> or <a href='register.php'>register</a> on Camgru to comment this picture!</p>
+              <p>You must <a class='basic-href' href='connection.php'>connect</a> or <a class='basic-href' href='register.php'>register</a> on Camgru to comment this picture!</p>
               </div>";
             }
             else if (empty($error)) {
@@ -174,6 +203,9 @@ var commentPosted	        = document.querySelector('#commentPosted'),
     setVisibilityPrivate  = document.querySelector('#setVisibilityPrivate'),
     setVisibilityEveryone	= document.querySelector('#setVisibilityEveryone'),
     setVisibilityMembers	= document.querySelector('#setVisibilityMembers'),
+    submitSetTitle	      = document.querySelector('#submitSetTitle'),
+    inputSetTitle	        = document.querySelector('#inputSetTitle'),
+    deleteSnapshot	      = document.querySelector('#deleteSnapshot'),
     id_user               = <?php echo $_SESSION['id_user'] ?>,
     idPrimSnap            = <?php echo $_GET['idPrimSnap'] ?>,
     scopeSnap             = <?php echo $scopeSnap ?>,
@@ -306,6 +338,59 @@ var commentPosted	        = document.querySelector('#commentPosted'),
         alert(response.message);
       }
     });
+  }, false);
+
+  function renameSnap(title, idPrimSnap, callback) {
+    $.ajax({
+        type: "POST",
+        url: 'renameSnap.php',
+        dataType: 'json',
+        data: {
+          title: title,
+          id_snap: idPrimSnap
+        },
+        success: callback
+    });
+  }
+
+  submitSetTitle.addEventListener('click', function(ev){
+    renameSnap(inputSetTitle.value, idPrimSnap, function(response) {
+      if (response.status == 1) {
+        console.log("Snapshot has been rename!");
+        location.reload();
+      }
+      else {
+        console.log(response.message);
+        alert(response.message);
+      }
+    });
+  }, false);
+
+  function deleteSnap(idPrimSnap, callback) {
+    $.ajax({
+        type: "POST",
+        url: 'deleteSnap.php',
+        dataType: 'json',
+        data: {
+          id_snap: idPrimSnap
+        },
+        success: callback
+    });
+  }
+  deleteSnapshot.addEventListener('click', function(ev){
+    if (confirm("Are you sure you want to delete your picture?")) {
+      deleteSnap(idPrimSnap, function(response) {
+        if (response.status == 1) {
+          console.log("Snapshot has been delete!");
+          alert("Snapshot has been delete!");
+          window.location.replace("index.php");
+        }
+        else {
+          console.log(response.message);
+          alert(response.message);
+        }
+      });
+    }
   }, false);
 
 })();

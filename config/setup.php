@@ -77,6 +77,7 @@ function delTree($dir) {
                   `id_snap` int(11) NOT NULL,
                   `path` varchar(50) NOT NULL,
                   `id_snap_of_user` int(11) NOT NULL,
+                  `title` varchar(30) NOT NULL,
                   `timestamps` DATETIME NOT NULL,
                   `thumbs_up` int(11) NOT NULL,
                   `thumbs_down` int(11) NOT NULL,
@@ -110,13 +111,30 @@ function delTree($dir) {
                   MODIFY `id_post` int(11) NOT NULL AUTO_INCREMENT;
 
                 ALTER TABLE `posts`
-                  ADD CONSTRAINT fk_posts_user FOREIGN KEY (id_user) REFERENCES users(id_user);
+                  ADD CONSTRAINT fk_posts_user FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE;
 
                 ALTER TABLE `posts`
                   ADD CONSTRAINT fk_posts_snap FOREIGN KEY (id_snap) REFERENCES snapshots(id_snap) ON DELETE CASCADE;
 
 
-    # --------------- POSTS TABLE---------------
+    # --------------- TWITTER TABLE --------------
+
+                DROP TABLE IF EXISTS `twitter`;
+                CREATE TABLE `twitter` (
+                  `authentified` tinyint(2) NOT NULL,
+                  `id_twitter` int(10) NOT NULL,
+                  `screen_name` varchar(20) NOT NULL,
+                  `token` varchar(50) NOT NULL,
+                  `token_secret` varchar(50) NOT NULL,
+                  `expires` int(11) NOT NULL,
+                  `id_user` int(11) NOT NULL
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+                ALTER TABLE `twitter`
+                  ADD CONSTRAINT fk_twitter_user FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE;
+
+
+    # --------------- THUMBS TABLE --------------
 
                 DROP TABLE IF EXISTS `thumbs`;
                 CREATE TABLE `thumbs` (
@@ -126,12 +144,10 @@ function delTree($dir) {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
                 ALTER TABLE `thumbs`
-                  ADD CONSTRAINT fk_thumbs_user FOREIGN KEY (id_user) REFERENCES users(id_user);
+                  ADD CONSTRAINT fk_thumbs_user FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE;
 
                 ALTER TABLE `thumbs`
                   ADD CONSTRAINT fk_thumbs_snap FOREIGN KEY (id_snap) REFERENCES snapshots(id_snap) ON DELETE CASCADE;
-
-
 
     # ---------------  EVENTS ---------------
 

@@ -16,10 +16,10 @@ function checkStatus($status, &$errors, $mail) {
       if ($_SESSION['rank'] == 2)
           header('Location: admin.php');
       if ($_SESSION['rank'] == 1)
-          header('Location: profile.php');
+          header('Location: index.php');
     }
     if (isset($_SESSION['login']) && $_SESSION['login'] != "")
-        header('Location: profile.php');
+        header('Location: index.php');
 
     if (!empty($_POST)) {
       $wrong = [];
@@ -43,6 +43,8 @@ function checkStatus($status, &$errors, $mail) {
                 $_SESSION['login'] = $data['login'];
                 $_SESSION['rank'] = (int)$data['rank'];
                 $_SESSION['id_user'] = $data['id_user'];
+                $_SESSION['id_snap_to_tweet'] = 0;
+                $_SESSION['textTweet'] = "";
                 $dataUser->closeCursor();
                 header('Location: index.php');
               }
@@ -91,7 +93,7 @@ function checkStatus($status, &$errors, $mail) {
                   <label class="login-field-icon fui-lock" for="login-pass"></label>
                 </div>
                 <input class="btn btn-primary btn-large btn-block" type="submit" name="submit" value="LOGIN">
-                <a class="login-link" href="#">Lost your password?</a>
+                <a class="login-link" href="reset_password.php">Lost your password? Reset it here!</a>
                 </br>
                 <a class="login-link" href="register.php">Don't have an account ? Create one here !</a>
               </form>

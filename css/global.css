@@ -65,13 +65,48 @@ div.row:nth-child(1) {
   text-align: left;
 }
 
+.toLeft {
+  float: left;
+}
+
+.toRight {
+  float: right;
+}
+
+.no-padding {
+  padding: 0px;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.colorBlack {
+  color: black;
+}
+
+.basic-href {
+  text-decoration: none;
+  color: black;
+  font-weight: bold;
+}
+
+.basic-padding {
+  padding: 10px;
+}
+
+.basic-margin {
+  margin: 10px;
+}
+
 .app-title {
-text-align: center;
-color: #777;
+  text-align: center;
+  color: #2F3131;
 }
 
 .error {
   color: red;
+  font-weight: bold;
 }
 
 .hidden {
@@ -99,12 +134,280 @@ color: #777;
 
 /*<-----------------   END OF GLOBAL   ----------------->*/
 
+/*<-----------------       INDEX       ----------------->*/
+
+#galeryContainer {
+  display: table;
+  margin-bottom: 15px;
+  /*padding-bottom: 50px;*/
+  /*margin-top: 20px;*/
+  /*margin-bottom: 20px;*/
+}
+
+/*a {
+    text-decoration: none;
+}*/
+
+.thumbnailCase {
+  float: left;
+  /*height: 244px;*/
+  height: auto;
+  width: 270px;
+  margin-left: 16px;
+  /*28*/
+  padding: 5px;
+  text-decoration: none;
+  color:black;
+  border: 1px solid #FFFAF0;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+}
+
+.thumbnailCase:hover {
+  transition: background-color .3s;
+  background: #FFD57B;
+  border-radius: 3px 3px 3px 3px;
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-radius: 3px 3px 3px 3px;
+  /*border: 1px solid #DC9A0A;*/
+  /*width: 268px;*/
+  height: auto;
+
+}
+
+.thumbnailContent {
+  /*float: left;*/
+  font-size: 12px;
+  /*display:block;*/
+  /*word-wrap:break-word;*/
+  /*overflow:auto;*/
+  /*display:inline-block;*/
+  /*border: 1px solid #ECE1CD;*/
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+}
+
+.thumbnailImg {
+  width: 266px;
+  /*padding-right:2px;*/
+  border: 2px solid #2F3131;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+}
+
+.thumbnailContent span {
+  display:block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.thumbnailAuthor {
+  font-style: italic;
+  text-decoration: underline;
+  width: 265px;
+  height: auto;
+}
+
+.thumbnailThumbs_up {
+  color: green;
+  display: inline;
+}
+
+.thumbnailThumbs_down {
+  color: red;
+  display: inline;
+}
+
+.thumbnailContent img {
+  display: block;
+  margin: 0 auto;
+  height: 200px;
+  width: 266px;
+}
+
+.sepThumbnailVertical {
+  float: left;
+  min-width: 1px;
+  /*clear:both;*/
+  width: 1px;
+  height: 160px;
+  border-left: 1px solid #FFCA58;
+  margin-left: 13px;
+  margin-right: 13px;
+  margin-top: 30px;
+  /*margin-bottom: 20px;*/
+}
+
+.sepThumbnailHorizontal {
+  float: left;
+  min-height: 1px;
+  /*clear:both;*/
+  width: 810px;
+  height: 1px;
+  border-bottom: 2px solid #FFCA58;
+  margin-left: 50px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  /*margin-bottom: 20px;*/
+}
+
+#pagination {
+  display: table;
+  /*clear: both;*/
+  /*float: left;*/
+  margin: 0 auto;
+  margin-bottom: 20px;
+}
+
+#pagination a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color .3s;
+}
+
+#pagination a.active {
+    background-color: #DC9A0A;
+    color: white;
+}
+
+#pagination a:hover:not(.active) {background-color: #FFCA58;}
+
+#indexMessage {
+  padding: 0px 20px 0px 20px;
+}
+
+/*.ul.pagination {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+}
+
+ul.pagination li {display: inline;}
+
+ul.pagination li a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color .3s;
+}
+
+ul.pagination li a.active {
+    background-color: #4CAF50;
+    color: white;
+}
+
+ul.pagination li a:hover:not(.active) {background-color: #ddd;}*/
+
+
+/*<-----------------    END OF INDEX   ----------------->*/
+
+/*<-----------------       ADMIN       ----------------->*/
+
+legend {
+  font-size: 18px;
+}
+
+.btnAdmin {
+  border: 2px solid transparent;
+  background: #FFCA58;
+  color: #ffffff;
+  font-size: 17px;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+  text-shadow: none;
+  border-radius: 3px;
+  box-shadow: none;
+  transition: 0.25s;
+  font-weight: bold;
+  float: right;
+  display: inline;
+}
+
+.selectAdmin {
+  border: 2px solid transparent;
+  font-size: 17px;
+  padding: 10px 20px 10px 20px;
+  text-shadow: none;
+  border-radius: 3px;
+  box-shadow: none;
+  transition: 0.25s;
+  display: inline;
+}
+
+.btnBigAdmin {
+  border: 2px solid transparent;
+  background: #FFCA58;
+  color: #ffffff;
+  font-size: 17px;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+  text-shadow: none;
+  border-radius: 3px;
+  box-shadow: none;
+  transition: 0.25s;
+  font-weight: bold;
+  width: 100%;
+  /*float: right;*/
+  /*display: inline;*/
+}
+
+#passwordSection input {
+  width: 275px;
+  margin-left: 9px;
+  margin-bottom: 10px;
+}
+
+.twoField {
+  width: 40%;
+  margin-left: 6%;
+  margin-bottom: 15px;
+}
+
+
+/*<-----------------    END OF ADMIN   ----------------->*/
+
 /*<----------------- SEE SNAP SECTION  ----------------->*/
 
 #seeSnap {
   margin-bottom: 25px;
   padding-top: 15px;
   font-size: 18px;
+}
+
+.authorHref {
+  text-decoration: none;
+  color: black;
+}
+
+#settingsSnapshot span {
+  float: left;
+  vertical-align:middle; float:left;
+  line-height: 42px;
+  width: 15%;
+}
+
+#seeSnapTitle {
+  margin-left: 40px;
+  font-size: 20px;
+  text-decoration: underline;
+}
+
+#setTitle > input, #setTitle > button {
+  margin-left: 30px;
+  display: inline;
+}
+
+#deleteSnapshot {
+  margin-left: 30px;
+  /*margin-right: 400px;;*/
+  display: inline;
 }
 
 #seeSnapAuthor {
@@ -138,6 +441,7 @@ color: #777;
   margin-left: 129px;
   margin-top: 25px;
   margin-bottom: 25px;
+  border: 2px solid #2F3131;
   border-radius: 3px 3px 3px 3px;
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
@@ -162,8 +466,18 @@ color: #777;
 #newPostText {
   margin-left: 10px;
   width: 890px;
-  max-width: 920px;
+  max-width: 890px;
   height: 6em;
+}
+
+#tweetSepPost {
+  width: 890px;
+  background-color: #F9BA32;
+  min-height: 2px;
+  height: 2px;
+  margin-left: 10px;
+  margin-top: 0px;
+  margin-bottom: 15px;
 }
 
 #firstSepPost {
@@ -233,6 +547,48 @@ color: #777;
   margin-bottom: 20px;
 }
 
+#sectionTweet {
+  display: inline;
+  vertical-align: middle;
+  margin-bottom: 15px;
+}
+
+#textTweet {
+  margin-left: 10px;
+  width: 650px;
+  max-width: 650px;
+  height: 4em;
+  max-height: 4em;
+  display: inline;
+  vertical-align: middle;
+  /*display: inline;*/
+}
+
+#submitTweet {
+  background: #69D2E7;
+  margin-left: 30px;
+  vertical-align: middle;
+  display: inline;
+}
+
+#submitTweet:hover {
+  background: #47B7FF;
+}
+
+#connectTwitter {
+  width: 460px;
+  margin-left: 250px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background: #69D2E7;
+  /*color: blue;*/
+}
+
+#connectTwitter:hover {
+  background: #47B7FF;
+}
+
+
 
 /*<-----------------  END OF SEE SNAP  ----------------->*/
 
@@ -285,6 +641,7 @@ color: #777;
 }
 
 #filterActive {
+  border: 2px solid transparent;
   position: absolute;
   margin-left: 26px;
   z-index: 3;
@@ -295,11 +652,81 @@ color: #777;
 }
 
 #video {
+  border: 2px solid #2F3131;
   margin-left: 26px;
   margin-bottom: 30px;
   border-radius: 3px 3px 3px 3px;
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
+}
+
+#imageUploadFromUser {
+  width: 640px;
+  height: 480px;
+  border: 2px solid #2F3131;
+  margin-left: 26px;
+  margin-bottom: 30px;
+  border-radius: 3px 3px 3px 3px;
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-radius: 3px 3px 3px 3px;
+}
+
+#startbutton {
+  width: 396px;
+  margin-left: 150px;
+  display: block;
+}
+
+#useCamera {
+  border: 2px solid transparent;
+  background: #F9BA32;
+  color: #ffffff;
+  font-size: 17px;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+  text-shadow: none;
+  border-radius: 3px;
+  box-shadow: none;
+  transition: 0.25s;
+  font-weight: bold;
+  display: inline;
+}
+
+#useCamera:hover {
+  background-color: #F9BA32;
+}
+
+#betweenChoice {
+  margin-left: 20px;
+  margin-right: 20px;
+  display: inline;
+}
+
+#imageFromUser {
+  border: 2px solid transparent;
+  background: #FFCA58;
+  color: #FFFAF0;
+  width: auto;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 17px;
+  text-shadow: none;
+  border-radius: 3px;
+  box-shadow: none;
+  transition: 0.25s;
+}
+
+#imageFromUser:hover {
+  background-color: #F9BA32;
+}
+
+#choiceContainer {
+  display: table;
+  margin: 15px auto 15px;
+}
+
+.choiceSelected {
+  background: #F9BA32;
 }
 
 /*<--------------- END OF TAKE SNAP ----------------->*/
@@ -322,7 +749,7 @@ color: #777;
 
 /*<--------------------- TOP NAV BAR ----------------------->*/
 
-ul {
+ul.topnav {
     list-style-type: none;
     margin: 0;
     padding: 0;

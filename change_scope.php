@@ -21,7 +21,7 @@
       $action = $_POST['action'];
       $snap = $bdd->query("SELECT `id_user`, `scope` FROM `snapshots` WHERE `id_snap` = " . $_POST['id_snap'] . ";");
       if ($snapData = $snap->fetch()) {
-        if ($snapData['id_user'] != $_SESSION['id_user']) {
+        if (($snapData['id_user'] != $_SESSION['id_user']) && $_SESSION['rank'] != 2) {
           echo json_encode(array("status" => 0, "message" => "Don't have rights to change!."));
         }
         else {

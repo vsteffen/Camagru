@@ -9,7 +9,7 @@
         $log_bar = '<li class="dropdown right">
                       <a href="javascript:void(0)" class="dropbtn">Profile</a>
                       <div class="dropdown-content">
-                        <a href="personal_galery.php">My pictures</a>
+                        <a href="galery_user.php?user=' . $_SESSION['login'] . '">My pictures</a>
                         <a href="account_settings.php">Settings</a>
                         <a href="logout.php">Logout</a>
                       </div>
@@ -17,5 +17,8 @@
                     <li class="right"><a href="take_snapshot.php">Take a pic!</a></li>';
       }
       echo $log_bar;
+      if (isset($_SESSION['rank']) && $_SESSION['rank'] == 2) {
+        echo '<li class="right"><a href="administration.php">Administration</a></li>';
+      }
   ?>
 </ul>
