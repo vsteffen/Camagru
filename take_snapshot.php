@@ -27,7 +27,7 @@
           <div id="choiceContainer">
             <button id="useCamera">CAMERA</button>
             <span id="betweenChoice">OR</span>
-            <input id="imageFromUser" type="file" name="imageFromUser" accept=".gif,.jpeg,.png">
+            <input id="imageFromUser" type="file" name="imageFromUser" accept=".gif,.jpg,.png">
           </div>
           <canvas style="display: none" id="canvas"></canvas>
           <div>

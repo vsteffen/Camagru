@@ -39,9 +39,10 @@
       if (!$scopeOk)
         $error[] = "You don't have the permissions to access to this picture.";
       else {
-        $userSnap = $bdd->query("SELECT `login` FROM `users` WHERE `id_user` = " . $snapData['id_user'] . ";");
+        $userSnap = $bdd->query("SELECT `login`, `id_user` FROM `users` WHERE `id_user` = " . $snapData['id_user'] . ";");
         $loginData = $userSnap->fetch();
         $author = $loginData['login'];
+		$author_id_user = $loginData['id_user'];
         $userSnap->closeCursor();
 
         $title = $snapData['title'];
@@ -202,34 +203,36 @@
 <script type="text/javascript">
 (function() {
 
-var commentPosted	        = document.querySelector('#commentPosted'),
+var commentPosted	      = document.querySelector('#commentPosted'),
     newPost   	          = document.querySelector('#newPost'),
     newPostText	          = document.querySelector('#newPostText'),
-    newPostSubmit	        = document.querySelector('#newPostSubmit'),
-    link_thumb_up	        = document.querySelector('#link_thumb_up'),
+    newPostSubmit	      = document.querySelector('#newPostSubmit'),
+    link_thumb_up	      = document.querySelector('#link_thumb_up'),
     link_thumb_down       = document.querySelector('#link_thumb_down'),
-    thumb_up	            = document.querySelector('#thumb_up'),
+    thumb_up	          = document.querySelector('#thumb_up'),
     thumb_down	          = document.querySelector('#thumb_down'),
     setVisibilityPrivate  = document.querySelector('#setVisibilityPrivate'),
-    setVisibilityEveryone	= document.querySelector('#setVisibilityEveryone'),
-    setVisibilityMembers	= document.querySelector('#setVisibilityMembers'),
+    setVisibilityEveryone = document.querySelector('#setVisibilityEveryone'),
+    setVisibilityMembers  = document.querySelector('#setVisibilityMembers'),
     submitSetTitle	      = document.querySelector('#submitSetTitle'),
-    inputSetTitle	        = document.querySelector('#inputSetTitle'),
+    inputSetTitle	      = document.querySelector('#inputSetTitle'),
     deleteSnapshot	      = document.querySelector('#deleteSnapshot'),
     id_user               = <?php echo $_SESSION['id_user'] ?>,
     idPrimSnap            = <?php echo $_GET['idPrimSnap'] ?>,
-    scopeSnap             = <?php echo $scopeSnap ?>,
+	scopeSnap             = <?php echo $scopeSnap ?>,
+    author_id_user        = <?php echo $author_id_user ?>,
     num_thumb_up          = <?php echo $thumbs_up?>,
     num_thumb_down        = <?php echo $thumbs_down?>;
 
 
-  function sendPost(text, idPrimSnap, callback) {
+  function sendPost(text, idPrimSnap, author_id_user, callback) {
     $.ajax({
         type: "POST",
         url: 'new_post.php',
-        dataType: 'json',
+        dataType: 'text',
         data: {
-          postText: text,
+		  postText: text,
+          id_user: author_id_user,
           idPrimSnap: idPrimSnap
         },
         success: callback
@@ -238,7 +241,7 @@ var commentPosted	        = document.querySelector('#commentPosted'),
 
   newPostSubmit.addEventListener('click', function(ev){
     if (newPostText.value.length > 0) {
-      sendPost(newPostText.value, idPrimSnap, function(response) {
+      sendPost(newPostText.value, idPrimSnap, author_id_user, function(response) {
         if (response.status == 1) {
           console.log("Success while sending the post.");
           window.location.reload();
@@ -248,6 +251,7 @@ var commentPosted	        = document.querySelector('#commentPosted'),
           console.log(response.errorMessage);
           alert(response.errorMessage);
         }
+		alert(response);
       });
       // newPost.parentNode.removeChild(newPost);
       // alert("ok");

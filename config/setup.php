@@ -4,16 +4,18 @@ function delTree($dir) {
     foreach ($files as $file) {
       (is_dir("$dir/$file")) ? delTree("$dir/$file") : unlink("$dir/$file");
     }
-    return rmdir($dir);
+	if (file_exists($dir))
+    	return rmdir($dir);
+	return false;
   }
-
 
   require_once("./database.php");
 
   try {
       $dbh = new PDO($DB_DSN_INSTALL, $DB_USER, $DB_PASSWORD);
-
-      $query = "SET SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO';
+	  $dbh->setAttribute(PDO::ATTR_TIMEOUT, 120);
+	  $dbh->exec("SET GLOBAL max_allowed_packet=64M;");
+      $global = "SET SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO';
                 SET time_zone = '+00:00';
 
                 DROP DATABASE IF EXISTS `$DB_NAME`;
@@ -22,11 +24,14 @@ function delTree($dir) {
 
                 USE `$DB_NAME`;
 
-                SET NAMES 'utf8';
+                SET NAMES 'utf8';";
+
+	  $dbh->exec($global);
+
 
     # ---------------  USERS TABLE ---------------
 
-                DROP TABLE IF EXISTS `users`;
+      $user =  "DROP TABLE IF EXISTS `users`;
                 CREATE TABLE `users` (
                   `id_user` int(11) NOT NULL,
                   `login` varchar(30) NOT NULL,
@@ -47,12 +52,13 @@ function delTree($dir) {
                 INSERT INTO `users` (`id_user`, `login`, `pwd`, `mail`, `avatar`, `localisation`, `status`, `last_log`, `rank`) VALUES
                   (NULL, 'admin', 'd74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1', 'admin@camagru.com', '', 'Paris', 1, '1', '2'),
                   (NULL, 'member1', 'd74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1', 'member1@member.com', '', 'Créteil', 0, '1', '1'),
-                  (NULL, 'member2', 'd74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1', 'member2@member.com', '', 'DoudouLand', 1, '1', '1');
+                  (NULL, 'member2', 'd74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1', 'member2@member.com', '', 'DoudouLand', 1, '1', '1');";
 
+		$dbh->exec($user);
 
     # ---------------  TOKENS TABLE---------------
 
-                DROP TABLE IF EXISTS `tokens`;
+        $tokens = "DROP TABLE IF EXISTS `tokens`;
                 CREATE TABLE `tokens` (
                   `id_token` int(11) NOT NULL,
                   `usage` tinyint(4) NOT NULL,
@@ -67,12 +73,13 @@ function delTree($dir) {
                   MODIFY `id_token` int(11) NOT NULL AUTO_INCREMENT;
 
                 ALTER TABLE `tokens`
-                  ADD CONSTRAINT fk_tokens_user FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE;
+                  ADD CONSTRAINT fk_tokens_user FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE;";
 
+		$dbh->exec($tokens);
 
     # ---------------  SNAPSHOTS TABLE ---------------
 
-                DROP TABLE IF EXISTS `snapshots`;
+		$snapshots = "DROP TABLE IF EXISTS `snapshots`;
                 CREATE TABLE `snapshots` (
                   `id_snap` int(11) NOT NULL,
                   `path` varchar(50) NOT NULL,
@@ -91,12 +98,13 @@ function delTree($dir) {
                   MODIFY `id_snap` int(11) NOT NULL AUTO_INCREMENT;
 
                 ALTER TABLE `snapshots`
-                  ADD CONSTRAINT fk_snapshots_user FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE;
+                  ADD CONSTRAINT fk_snapshots_user FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE;";
 
+		$dbh->exec($snapshots);
 
     # --------------- POSTS TABLE---------------
 
-                DROP TABLE IF EXISTS `posts`;
+        $posts = "DROP TABLE IF EXISTS `posts`;
                 CREATE TABLE `posts` (
                   `id_post` int(11) NOT NULL,
                   `text` varchar(250) NOT NULL,
@@ -114,12 +122,13 @@ function delTree($dir) {
                   ADD CONSTRAINT fk_posts_user FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE;
 
                 ALTER TABLE `posts`
-                  ADD CONSTRAINT fk_posts_snap FOREIGN KEY (id_snap) REFERENCES snapshots(id_snap) ON DELETE CASCADE;
+                  ADD CONSTRAINT fk_posts_snap FOREIGN KEY (id_snap) REFERENCES snapshots(id_snap) ON DELETE CASCADE;";
 
+		$dbh->exec($posts);
 
     # --------------- TWITTER TABLE --------------
 
-                DROP TABLE IF EXISTS `twitter`;
+        $twitter = "DROP TABLE IF EXISTS `twitter`;
                 CREATE TABLE `twitter` (
                   `authentified` tinyint(2) NOT NULL,
                   `id_twitter` int(10) NOT NULL,
@@ -131,12 +140,13 @@ function delTree($dir) {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
                 ALTER TABLE `twitter`
-                  ADD CONSTRAINT fk_twitter_user FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE;
+                  ADD CONSTRAINT fk_twitter_user FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE;";
 
+		$dbh->exec($twitter);
 
     # --------------- THUMBS TABLE --------------
 
-                DROP TABLE IF EXISTS `thumbs`;
+    	$thumbs = "DROP TABLE IF EXISTS `thumbs`;
                 CREATE TABLE `thumbs` (
                   `upOrDown` tinyint(2) NOT NULL,
                   `id_snap` int(11) NOT NULL,
@@ -147,11 +157,12 @@ function delTree($dir) {
                   ADD CONSTRAINT fk_thumbs_user FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE;
 
                 ALTER TABLE `thumbs`
-                  ADD CONSTRAINT fk_thumbs_snap FOREIGN KEY (id_snap) REFERENCES snapshots(id_snap) ON DELETE CASCADE;
+                  ADD CONSTRAINT fk_thumbs_snap FOREIGN KEY (id_snap) REFERENCES snapshots(id_snap) ON DELETE CASCADE;";
 
+		$dbh->exec($thumbs);
     # ---------------  EVENTS ---------------
 
-                SET GLOBAL EVENT_SCHEDULER = ON;
+        $event = "SET GLOBAL EVENT_SCHEDULER = ON;
 
                 CREATE EVENT clean_token
                   ON SCHEDULE
@@ -163,8 +174,7 @@ function delTree($dir) {
                   END;
                 ";
 
-
-      $dbh->exec($query);
+      $dbh->exec($event);
       delTree("../image/login");
       mkdir("../image/login");
       mkdir("../image/login/admin");

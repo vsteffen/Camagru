@@ -4,7 +4,7 @@ html, body {
     width: 100%;
     min-width: 960px;
     margin: 0;
-    background: #ECE1CD;
+    background: #FFFAF0;
     font-family:'Open Sans', Helvetica, Arial;
 }
 
@@ -16,7 +16,7 @@ html, body {
   margin: 30px 0px 30px 15px;
   padding: 10px;
   z-index: 1;
-  background: #FFFAF0;
+  background: #FFFFFD;
   border: 2px solid lightgrey;
   border-radius: 3px 3px 3px 3px;
   -moz-border-radius: 3px 3px 3px 3px;
@@ -155,7 +155,7 @@ div.row:nth-child(1) {
   padding: 5px;
   text-decoration: none;
   color:black;
-  border: 1px solid #FFFAF0;
+  border: 1px solid #FFFFFD;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
@@ -657,7 +657,7 @@ legend {
 #imageFromUser {
   border: 2px solid transparent;
   background: #FFCA58;
-  color: #FFFAF0;
+  color: #FFFFFD;
   width: auto;
   white-space: nowrap;
   text-overflow: ellipsis;

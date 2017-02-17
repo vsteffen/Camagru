@@ -1,23 +1,23 @@
 (function() {
 
 var localStream,
-    streaming	  	      = false,
+    streaming	  	    = false,
     uploadFile          = false,
-    video			          = document.querySelector('#video'),
-    cover			          = document.querySelector('#cover'),
-    canvas		  	      = document.querySelector('#canvas'),
-    photo		     	      = document.querySelector('#photo'),
-    photoTaken		      = document.querySelector('#photoTaken'),
-    startbutton		      = document.querySelector('#startbutton'),
-    filterSelect	      = document.querySelector('.filter-select'),
+    video			    = document.querySelector('#video'),
+    cover			    = document.querySelector('#cover'),
+    canvas		  	    = document.querySelector('#canvas'),
+    photo		        = document.querySelector('#photo'),
+    photoTaken		    = document.querySelector('#photoTaken'),
+    startbutton		    = document.querySelector('#startbutton'),
+    filterSelect	    = document.querySelector('.filter-select'),
     filterCase          = document.getElementsByClassName('filterCase'),
-    filterActive	      = document.querySelector('#filterActive'),
+    filterActive	    = document.querySelector('#filterActive'),
     imageFromUser       = document.querySelector('#imageFromUser'),
     imageUploadFromUser = document.querySelector('#imageUploadFromUser'),
     firstSnap           = 1,
     filterPath          = "",
-    width			          = 640,
-    height			        = 0;
+    width			    = 640,
+    height			    = 0;
 
 var ajaxUpload;
 
