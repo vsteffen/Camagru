@@ -1,4 +1,18 @@
 <?php
+
+function rrmdir($dir) {
+  if (is_dir($dir)) {
+	$objects = scandir($dir);
+	foreach ($objects as $object) {
+	  if ($object != "." && $object != "..") {
+		if (filetype($dir."/".$object) == "dir") rrmdir($dir."/".$object); else unlink($dir."/".$object);
+	  }
+	}
+	reset($objects);
+	rmdir($dir);
+  }
+}
+
   if (!isset($_SESSION))
     session_start();
 
@@ -18,7 +32,7 @@ if (!isset($_SESSION['rank']) || $_SESSION['rank'] !== 2)
   if (isset($_POST['accountDelete'])) {
     if ($bdd->exec("DELETE FROM `users` WHERE `login` = '" . $_POST['accountDeleteId'] . "' OR `mail` = '" . $_POST['accountDeleteId'] . "';")) {
       $message = "Success to delete the following account : " . $_POST['accountDeleteId'] . PHP_EOL;
-      rmdir("./image/login/" . $_POST['accountDeleteId']);
+      rrmdir("./image/login/" . $_POST['accountDeleteId']);
     }
     else
       $message = "Failed to delete the following account : " . $_POST['accountDeleteId'] . PHP_EOL;

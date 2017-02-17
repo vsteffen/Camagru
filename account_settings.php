@@ -1,5 +1,19 @@
 <?php
 
+function rrmdir($dir) {
+  if (is_dir($dir)) {
+	$objects = scandir($dir);
+	foreach ($objects as $object) {
+	  if ($object != "." && $object != "..") {
+		if (filetype($dir."/".$object) == "dir") rrmdir($dir."/".$object); else unlink($dir."/".$object);
+	  }
+	}
+	reset($objects);
+	rmdir($dir);
+  }
+}
+
+
   if (!isset($_SESSION))
       session_start();
 
@@ -12,7 +26,7 @@
   $error = [];
   if (isset($_POST['accountDelete'])) {
     if ($bdd->exec("DELETE FROM `users` WHERE `id_user` = " . $_SESSION['id_user'] . ";")) {
-      rmdir("./image/login/" . $_SESSION['login']);
+      rrmdir("./image/login/" . $_SESSION['login']);
       $_SESSION['login'] = "";
       $_SESSION['rank'] = 0;
       $_SESSION['id_user'] = 0;
