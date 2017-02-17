@@ -229,7 +229,7 @@ var commentPosted	      = document.querySelector('#commentPosted'),
     $.ajax({
         type: "POST",
         url: 'new_post.php',
-        dataType: 'text',
+        dataType: 'json',
         data: {
 		  postText: text,
           id_user: author_id_user,
@@ -251,7 +251,6 @@ var commentPosted	      = document.querySelector('#commentPosted'),
           console.log(response.errorMessage);
           alert(response.errorMessage);
         }
-		alert(response);
       });
       // newPost.parentNode.removeChild(newPost);
       // alert("ok");

@@ -79,7 +79,7 @@
 			width: 150px;
 			text-align:center;
 			margin: 15px auto 15px auto;\">
-			  Reset password
+			  Picture
 		  </div></a>
 			See you soon, have fun on Camagru !
 		  </div>
