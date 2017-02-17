@@ -39,15 +39,9 @@
   if (!isset($_SESSION))
     session_start();
 
-  require_once('config/database.php');
-  try
-  {
-    $bdd = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
-  }
-  catch(Exception $e)
-  {
-    die('Error : '.$e->getMessage());
-  }
+  require_once('config/connect_bdd.php');
+  $bdd = connectBDD();
+  
   $error = [];
   if (isset($_SESSION['id_user']) && !empty($_SESSION['id_user']))
       $scope = "> 0";
@@ -128,8 +122,8 @@
                           <img id=\"snap" . $galeryData['id_snap'] . "\" src=\"" . $galeryData['path'] . "\">
                           </div>";
                   if (!empty($galeryData['title']))
-                    echo "<span class=\"thumbnailAuthor\">Title : " . $galeryData['title'] . "</span>";
-                  echo "<span class=\"thumbnailAuthor\">By : " . getLoginByID($galeryData['id_user'], $bdd) . "</span>
+                    echo "<span class=\"thumbnailAuthor\">Title : " . htmlentities($galeryData['title']) . "</span>";
+                  echo "<span class=\"thumbnailAuthor\">By : " . htmlentities(getLoginByID($galeryData['id_user'], $bdd)) . "</span>
                         <span class=\"thumbnailThumbs\">Thumbs :
                         <div class=\"thumbnailThumbs_up\">" . $galeryData['thumbs_up'] ."</div> / <div class=\"thumbnailThumbs_down\">" . $galeryData['thumbs_down'] . "</div>
                         </span>

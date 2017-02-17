@@ -20,18 +20,15 @@ function checkLogin($login, &$errors) {
         header('Location: index.php');
     if (!empty($_POST)) {
       $wrong = [];
-      require_once('config/database.php');
-      try
-      {
-        $bdd = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
-      }
-      catch(Exception $e)
-      {
-        die('Erreur : '.$e->getMessage());
-      }
+
+      require_once('config/connect_bdd.php');
+      $bdd = connectBDD();
+
       if (isset($_POST['login']) && !empty($_POST['login'])) {
       $success = 1;
-      $user = $bdd->query("SELECT `id_user`, `mail`, `status` FROM `users` WHERE login='" . $_POST['login'] . "' OR mail='" . $_POST['login'] . "';");
+
+      $user = $bdd->prepare('SELECT `id_user`, `mail`, `status` FROM `users` WHERE login=:login1 OR mail=:login2;');
+      $user->execute(array('login1' => $_POST['login'], 'login2' => $_POST['login']));
         if (($userData = $user->fetch()) && $userData['status'] != 0) {
           $tokenQuery = $bdd->query("SELECT * FROM `tokens` WHERE `usage` = 1 AND `id_user` = " . $userData['id_user'] . ";");
           if ($dataToken = $tokenQuery->fetch()) {
@@ -129,7 +126,7 @@ function checkLogin($login, &$errors) {
   <head>
   	<title>Camagru - Reset password</title>
     <link rel="stylesheet" href="./css/global.css">
-  	<link rel="stylesheet" href="./css/login.css">
+    <link rel="icon" href="image/ressource/logo2.png">
   </head>
   <body>
     <div class="head_and_main">
@@ -137,7 +134,7 @@ function checkLogin($login, &$errors) {
       <div class="main">
         </br></br></br>
         <div class="login">
-          <div class="login-screen">
+          <div class="loginScreen">
             <div class="app-title">
               <?php
                 if (isset($success))
@@ -157,13 +154,12 @@ function checkLogin($login, &$errors) {
                     }
                   }
                   echo '
-                  <div class="login-form">
+                  <div class="alignCenter">
                   <form action="reset_password.php" method="post">
-                  <div class="control-group">
-                  <input type="text" class="login-field" name="login" value="" placeholder="Mail or login">
-                  <label class="login-field-icon fui-lock" for="login-name"></label>
+                  <div class="subsection">
+                  <input type="text" name="login" value="" placeholder="Mail or login">
                   </div>
-                  <input class="btn btn-primary btn-large btn-block" type="submit" name="submit" value="SEND MAIL">
+                  <input class="btn btnClassic" type="submit" name="submit" value="SEND MAIL">
                   </form>
                   </div>';
                 }

@@ -165,6 +165,7 @@ function changeFilter(e) {
       video.style.display = 'inherit';
       imageUploadFromUser.style.display = 'none';
       uploadFile = false;
+      imageFromUser.value = "";
       if (navigator.getUserMedia) {
          navigator.getUserMedia({ audio: false, video: { width: 640, height: 480 } },
             function(stream) {

@@ -6,15 +6,8 @@
   if (empty($_SESSION['login']))
       header('Location: connection.php');
 
-  require_once('config/database.php');
-  try
-  {
-    $bdd = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
-  }
-  catch(Exception $e)
-  {
-    die('Error : '.$e->getMessage());
-  }
+  require_once('config/connect_bdd.php');
+  $bdd = connectBDD();
 ?>
 
 <!DOCTYPE html>
@@ -33,8 +26,14 @@
             if (isset($_POST['id_snap_to_tweet'])) {
               $_SESSION['id_snap_to_tweet'] = $_POST['id_snap_to_tweet'];
             }
-            if (isset($_POST['textTweet']))
-              $_SESSION['textTweet'] = $_POST['textTweet'];
+            if (isset($_POST['textTweet'])) {
+              if (strlen(htmlentities($_POST['textTweet'])) > 140) {
+                $error = "Tweet too long, 140 characters max";
+                $no_button = true;
+              }
+              else
+                $_SESSION['textTweet'] = htmlentities($_POST['textTweet']);
+            }
             function debug($var) {
               echo "<pre style='text-align: left;'>";
               var_dump($var);
@@ -49,7 +48,8 @@
                 return false;
             }
             function postTweet($bdd, $twitterApi) {
-              $snap = $bdd->query("SELECT * FROM `snapshots` WHERE `id_snap` =  " . $_SESSION['id_snap_to_tweet'] . ";");
+              $snap = $bdd->prepare('SELECT * FROM `snapshots` WHERE `id_snap` = :id_snap_to_tweet;');
+              $snap->execute(array('id_snap_to_tweet' => $_SESSION['id_snap_to_tweet']));
               if ($dataSnap = $snap->fetch()) {
                 $path = $dataSnap['path'];
                 $snap->closeCursor();
@@ -83,9 +83,6 @@
               CONSUMER_SECRET
             );
 
-            // ECHO '$_SESSION["authentified"] = ' . $_SESSION['authentified'] . "</br>";
-            // ECHO '$_SESSION["oauth_token"] = ' . $_SESSION['oauth_token'] . "</br>";
-            // ECHO '$_SESSION["oauth_token_secret"] = ' . $_SESSION['oauth_token_secret'] . "</br>";
             $userTwitter = $bdd->query("SELECT * FROM `twitter` WHERE `id_user` = " . $_SESSION['id_user'] . ";");
             if ($dataUserTwitter = $userTwitter->fetch()) {
               $authentified = 1;
@@ -95,45 +92,48 @@
               $userTwitter->closeCursor();
             }
 
-            if (isset($_GET['denied'])) {
-              $userTwitter->closeCursor();
-              $error = "You have denied Camagru access to your twitter account. We will not be able to share your pictures! Please click on the link below if you want to start over.";
-            }
-            else if ($authentified) {
-              $verif_cred = $twitterApi->verifyCredentials($dataUserTwitter['token'], $dataUserTwitter['token_secret']);
-              if ($twitterApi->getLastResult() == 200) {
-                $result = postTweet($bdd, $twitterApi);
-                if ($result['status'] == 0 && $twitterApi->getLastResult() == 200) {
-                  $message = "Your tweet has been successfully send!";
+            if (!isset($error)) {
+              if (isset($_GET['denied'])) {
+                $userTwitter->closeCursor();
+                $error = "You have denied Camagru access to your twitter account. We will not be able to share your pictures! Please click on the link below if you want to start over.";
+              }
+              else if ($authentified) {
+                $verif_cred = $twitterApi->verifyCredentials($dataUserTwitter['token'], $dataUserTwitter['token_secret']);
+                if ($twitterApi->getLastResult() == 200) {
+                  $twitterApi->setTimeout(15, 15);
+                  $result = postTweet($bdd, $twitterApi);
+                  if ($result['status'] == 0 && $twitterApi->getLastResult() == 200) {
+                    $message = "Your tweet has been successfully send!";
+                  }
+                  else {
+                    $error = $result['message'];
+                    if ($result['status'] == 1)
+                      $no_button = 1;
+                  }
                 }
                 else {
-                  $error = $result['message'];
-                  if ($result['status'] == 1)
-                    $no_button = 1;
+                  $bdd->exec("DELETE FROM `twitter` WHERE `id_user` = " . $_SESSION['id_user'] . ";");
+                  $error = "An error occurred, please contact the camagru support! Or try to reconnect on your twitter account again;";
                 }
               }
-              else {
-                $bdd->exec("DELETE FROM `twitter` WHERE `id_user` = " . $_SESSION['id_user'] . ";");
-                $error = "An error occurred, please contact the camagru support! Or try to reconnect on your twitter account again;";
-              }
-            }
-            else if (isset($_GET['oauth_token'])) {
-              $token = $twitterApi->getAccessToken($_GET['oauth_token'], $_GET['oauth_verifier']);
-              $verif_cred = $twitterApi->verifyCredentials($token['oauth_token'], $token['oauth_token_secret']);
-              if ($twitterApi->getLastResult() == 200) {
-                $bdd->exec("INSERT INTO `twitter` (`authentified`, `id_twitter`, `screen_name`, `token`, `token_secret`, `expires`, `id_user`) VALUES ('1', " . $verif_cred->id . " , '" . $verif_cred->screen_name . "', '" . $token['oauth_token'] . "', '" . $token['oauth_token_secret'] . "', '0', " . $_SESSION['id_user'] . ");");
-                $result = postTweet($bdd, $twitterApi);
-                if ($result['status'] == 0 && $twitterApi->getLastResult() == 200) {
-                  $message = "Your tweet has been successfully send!";
+              else if (isset($_GET['oauth_token'])) {
+                $token = $twitterApi->getAccessToken($_GET['oauth_token'], $_GET['oauth_verifier']);
+                $verif_cred = $twitterApi->verifyCredentials($token['oauth_token'], $token['oauth_token_secret']);
+                if ($twitterApi->getLastResult() == 200) {
+                  $bdd->exec("INSERT INTO `twitter` (`authentified`, `id_twitter`, `screen_name`, `token`, `token_secret`, `expires`, `id_user`) VALUES ('1', " . $verif_cred->id . " , '" . $verif_cred->screen_name . "', '" . $token['oauth_token'] . "', '" . $token['oauth_token_secret'] . "', '0', " . $_SESSION['id_user'] . ");");
+                  $result = postTweet($bdd, $twitterApi);
+                  if ($result['status'] == 0 && $twitterApi->getLastResult() == 200) {
+                    $message = "Your tweet has been successfully send!";
+                  }
+                  else {
+                    $error = $result['message'];
+                    if ($result['status'] == 1)
+                      $no_button = 1;
+                  }
                 }
                 else {
-                  $error = $result['message'];
-                  if ($result['status'] == 1)
-                    $no_button = 1;
+                  $error = "An error occurred, please contact the camagru support! Or try connect on your twitter account again;";
                 }
-              }
-              else {
-                $error = "An error occurred, please contact the camagru support! Or try connect on your twitter account again;";
               }
             }
 

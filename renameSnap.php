@@ -9,26 +9,25 @@
     if (isset($_POST['title'])
           && isset($_POST['id_snap']) && !empty($_POST['id_snap'])
           && isset($_SESSION['id_user']) && !empty($_SESSION['id_user'])) {
-      require_once('config/database.php');
-      try
-      {
-        $bdd = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
-      }
-      catch(Exception $e)
-      {
-        die('Error : '.$e->getMessage());
-      }
+
+      require_once('config/connect_bdd.php');
+      $bdd = connectBDD();
+
       if ($_POST['title'] == "") {
-        echo json_encode(array("status" => 0, "message" => "Title is empty, please put at least one character."));
+        echo json_encode(array("status" => 0, "message" => "Title is empty, please put at least one character (30 max)."));
       }
+      else if (strlen($_POST['title']) > 30)
+        echo json_encode(array("status" => 0, "message" => "Title is too long, please put at least 30 character max (1 min)."));
       else {
-        $snap = $bdd->query("SELECT `id_user` FROM `snapshots` WHERE `id_snap` = " . $_POST['id_snap'] . ";");
+        $snap = $bdd->prepare('SELECT `id_user` FROM `snapshots` WHERE `id_snap` = :id_snap;');
+        $snap->execute(array('id_snap' => $_POST['id_snap']));
         if ($snapData = $snap->fetch()) {
           if ($snapData['id_user'] != $_SESSION['id_user'] && $_SESSION['rank'] != 2) {
             echo json_encode(array("status" => 0, "message" => "Don't have rights to change!."));
           }
           else {
-            $bdd->exec("UPDATE `snapshots` SET `title` = '" . $_POST['title'] . "' WHERE `snapshots`.`id_snap` = " . $_POST['id_snap'] . ";");
+            $updateTitle = $bdd->prepare('UPDATE `snapshots` SET `title` = :title WHERE `snapshots`.`id_snap` = :id_snap;');
+            $updateTitle->execute(array('title' => $_POST['title'], 'id_snap' => $_POST['id_snap']));
             echo json_encode(array("status" => 1));
           }
           $snap->closeCursor();

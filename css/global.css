@@ -21,8 +21,6 @@ html, body {
   border-radius: 3px 3px 3px 3px;
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
-  /*border-top: 20px solid lightgrey;*/
-  /*border-bottom: 20px solid lightgrey;*/
 }
 
 .main {
@@ -63,6 +61,14 @@ div.row:nth-child(1) {
 
 .no-align {
   text-align: left;
+}
+
+.alignCenter {
+  text-align: center;
+}
+
+.alignRight {
+  text-align: right;
 }
 
 .toLeft {
@@ -139,22 +145,13 @@ div.row:nth-child(1) {
 #galeryContainer {
   display: table;
   margin-bottom: 15px;
-  /*padding-bottom: 50px;*/
-  /*margin-top: 20px;*/
-  /*margin-bottom: 20px;*/
 }
-
-/*a {
-    text-decoration: none;
-}*/
 
 .thumbnailCase {
   float: left;
-  /*height: 244px;*/
   height: auto;
   width: 270px;
   margin-left: 16px;
-  /*28*/
   padding: 5px;
   text-decoration: none;
   color:black;
@@ -170,20 +167,11 @@ div.row:nth-child(1) {
   border-radius: 3px 3px 3px 3px;
   -moz-border-radius: 3px 3px 3px 3px;
   -webkit-border-radius: 3px 3px 3px 3px;
-  /*border: 1px solid #DC9A0A;*/
-  /*width: 268px;*/
   height: auto;
-
 }
 
 .thumbnailContent {
-  /*float: left;*/
   font-size: 12px;
-  /*display:block;*/
-  /*word-wrap:break-word;*/
-  /*overflow:auto;*/
-  /*display:inline-block;*/
-  /*border: 1px solid #ECE1CD;*/
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
@@ -191,7 +179,6 @@ div.row:nth-child(1) {
 
 .thumbnailImg {
   width: 266px;
-  /*padding-right:2px;*/
   border: 2px solid #2F3131;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -232,33 +219,27 @@ div.row:nth-child(1) {
 .sepThumbnailVertical {
   float: left;
   min-width: 1px;
-  /*clear:both;*/
   width: 1px;
   height: 160px;
   border-left: 1px solid #FFCA58;
   margin-left: 13px;
   margin-right: 13px;
   margin-top: 30px;
-  /*margin-bottom: 20px;*/
 }
 
 .sepThumbnailHorizontal {
   float: left;
   min-height: 1px;
-  /*clear:both;*/
   width: 810px;
   height: 1px;
   border-bottom: 2px solid #FFCA58;
   margin-left: 50px;
   margin-top: 15px;
   margin-bottom: 15px;
-  /*margin-bottom: 20px;*/
 }
 
 #pagination {
   display: table;
-  /*clear: both;*/
-  /*float: left;*/
   margin: 0 auto;
   margin-bottom: 20px;
 }
@@ -281,29 +262,6 @@ div.row:nth-child(1) {
 #indexMessage {
   padding: 0px 20px 0px 20px;
 }
-
-/*.ul.pagination {
-    display: inline-block;
-    padding: 0;
-    margin: 0;
-}
-
-ul.pagination li {display: inline;}
-
-ul.pagination li a {
-    color: black;
-    float: left;
-    padding: 8px 16px;
-    text-decoration: none;
-    transition: background-color .3s;
-}
-
-ul.pagination li a.active {
-    background-color: #4CAF50;
-    color: white;
-}
-
-ul.pagination li a:hover:not(.active) {background-color: #ddd;}*/
 
 
 /*<-----------------    END OF INDEX   ----------------->*/
@@ -354,8 +312,6 @@ legend {
   transition: 0.25s;
   font-weight: bold;
   width: 100%;
-  /*float: right;*/
-  /*display: inline;*/
 }
 
 #passwordSection input {
@@ -406,7 +362,6 @@ legend {
 
 #deleteSnapshot {
   margin-left: 30px;
-  /*margin-right: 400px;;*/
   display: inline;
 }
 
@@ -454,7 +409,6 @@ legend {
 
 .sepPost {
   min-height: 1px;
-  /*clear:both;*/
   width: 810px;
   height:1px;
   border-bottom:1px solid lightgrey;
@@ -561,7 +515,6 @@ legend {
   max-height: 4em;
   display: inline;
   vertical-align: middle;
-  /*display: inline;*/
 }
 
 #submitTweet {
@@ -581,13 +534,11 @@ legend {
   margin-top: 20px;
   margin-bottom: 20px;
   background: #69D2E7;
-  /*color: blue;*/
 }
 
 #connectTwitter:hover {
   background: #47B7FF;
 }
-
 
 
 /*<-----------------  END OF SEE SNAP  ----------------->*/
@@ -637,6 +588,7 @@ legend {
 }
 
 .filterCaseSelected {
+  transition: 0.25s;
   background: #FFCA58;
 }
 
@@ -846,13 +798,9 @@ ul.topnav li.right {float: right;}
 
 /*<------------- END OF OLD CSS FOR FOOTER -------------->*/
 
+/*<-------------     CSS FOR LOGIN PAGE    -------------->*/
 
-
-
-
-
-
-.login-screen {
+.loginScreen {
   position: relative;
   z-index: 1;
   background: #FFFFFF;
@@ -867,10 +815,11 @@ input:focus {
     outline-width: 0;
 }
 
-.login-form {
+.alignCenter {
 text-align: center;
 }
-.control-group {
+
+.subsection {
 margin-bottom: 10px;
 }
 
@@ -912,7 +861,7 @@ box-shadow: none;
   background-color: #F9BA32;
 }
 
-.login-link {
+.smallHref {
   font-size: 12px;
   color: #444;
   display: block;

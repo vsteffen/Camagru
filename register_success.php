@@ -16,18 +16,12 @@
   else
     header('Location: index.php');
 
-  require_once('config/database.php');
-  try
-  {
-    $bdd = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
-  }
-  catch(Exception $e)
-  {
-    die('Erreur : '.$e->getMessage());
-  }
+  require_once('config/connect_bdd.php');
+  $bdd = connectBDD();
 
 // --------------- VERIFY USER -------------
-  $dataUser = $bdd->query("SELECT status, id_user FROM users WHERE login='" . $_GET['login'] . "' OR mail='" . $_GET['mail'] . "';");
+  $dataUser = $bdd->prepare('SELECT status, id_user FROM users WHERE login=:login OR mail=:mail;');
+  $dataUser->execute(array('login' => $_GET['login'], 'mail' => $_GET['mail']));
   if ($data = $dataUser->fetch()) {
     if ($data['status'] != 0) {
       $dataUser->closeCursor();
@@ -41,8 +35,9 @@
   }
   $dataUser->closeCursor();
 
-// ---------------- GET TOKEN
-  $token_query = $bdd->query("SELECT * FROM `tokens` WHERE `usage` = 0 AND `id_user` = " . $id_user . ";");
+// ---------------- GET TOKEN ---------
+  $token_query = $bdd->prepare('SELECT * FROM `tokens` WHERE `usage` = 0 AND `id_user` = :id_user;');
+  $token_query->execute(array('id_user' => $id_user));
   if ($dataToken = $token_query->fetch()) {
     $token = $dataToken['content'];
     $tokenExist = 1;
@@ -124,7 +119,9 @@
    }
    else {
      if (!isset($tokenExist)) {
-       if (!$bdd->exec("INSERT INTO `tokens` (`id_token`, `usage`, `content`, `expires`, `id_user`) VALUES (NULL, '0', '" . $token . "', NOW() + INTERVAL 24 HOUR, '" . $id_user . "');"))
+       $newToken = $bdd->prepare('INSERT INTO `tokens` (`id_token`, `usage`, `content`, `expires`, `id_user`) VALUES (NULL, 0, :token, NOW() + INTERVAL 24 HOUR, :id_user);');
+       $newToken->execute(array('token' => $token, 'id_user' => $id_user));
+       if ($newToken->rowCount() != 1)
         $error[] = "Error with the database. Please contact the support team.";
      }
      $token_query->closeCursor();
@@ -139,7 +136,7 @@
         echo "<title>Camagru - Successfully registered</title>";
     ?>
     <link rel="stylesheet" href="./css/global.css">
-  	<link rel="stylesheet" href="./css/login.css">
+    <link rel="icon" href="image/ressource/logo2.png">
   </head>
   <body>
     <div class="head_and_main">

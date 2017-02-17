@@ -5,21 +5,15 @@
 if (!isset($_SESSION['rank']) || $_SESSION['rank'] !== 2)
   header("Location: index.php");
 
-  require_once('config/database.php');
-  try
-  {
-    $bdd = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
-  }
-  catch(Exception $e)
-  {
-    die('Error : '.$e->getMessage());
-  }
+  require_once('config/connect_bdd.php');
+  $bdd = connectBDD();
+
   $error = [];
   if (isset($_POST['accountStatus'])) {
-    if ($bdd->exec("UPDATE `users` SET `status` = '" . $_POST['accountStatusValue'] . "' WHERE `users`.`mail` = '" . $_POST['accountStatusMail'] . "';"))
-      $message = "Success to change the status (set at " . $_POST['accountStatusValue'] . ") for the following mail : " . $_POST['accountStatusMail'] . PHP_EOL;
+    if ($bdd->exec("UPDATE `users` SET `status` = '" . $_POST['accountStatusValue'] . "' WHERE `users`.`mail` = '" . $_POST['accountStatusMail'] . "' OR `login` = '" . $_POST['accountStatusMail'] . "';"))
+      $message = "Success to change the status (set at " . $_POST['accountStatusValue'] . ") for the following login : " . $_POST['accountStatusMail'] . PHP_EOL;
     else
-      $message = "Failed to change the status (try at " . $_POST['accountStatusValue'] . ") for the following mail : " . $_POST['accountStatusMail'] . PHP_EOL;
+      $message = "Failed to change the status (try at " . $_POST['accountStatusValue'] . ") for the following login : " . $_POST['accountStatusMail'] . PHP_EOL;
   }
   if (isset($_POST['accountDelete'])) {
     if ($bdd->exec("DELETE FROM `users` WHERE `login` = '" . $_POST['accountDeleteId'] . "' OR `mail` = '" . $_POST['accountDeleteId'] . "';")) {
@@ -92,11 +86,11 @@ if (!isset($_SESSION['rank']) || $_SESSION['rank'] !== 2)
           <form action="administration.php" method="post">
             <fieldset>
               <legend>Change status of account</legend>
-              <input type="text" name="accountStatusMail" value="" placeholder="Email">
+              <input type="text" name="accountStatusMail" value="" placeholder="Email or username">
               <select class="selectAdmin" name="accountStatusValue">
-                <option value="1">Inactive</option>
-                <option value="2">Normal</option>
-                <option value="3">Blocked</option>
+                <option value="0">Inactive</option>
+                <option value="1">Normal</option>
+                <option value="2">Blocked</option>
               </select>
               <button class="btnAdmin" type="submit" name="accountStatus">CHANGE</button>
             </fieldset>
@@ -105,7 +99,7 @@ if (!isset($_SESSION['rank']) || $_SESSION['rank'] !== 2)
           <form action="administration.php" method="post">
             <fieldset>
               <legend>Delete account</legend>
-              <input type="text" name="accountDeleteId" value="" placeholder="Email or login">
+              <input type="text" name="accountDeleteId" value="" placeholder="Email or username">
               <button class="btnAdmin" type="submit" name="accountDelete">DELETE</button>
             </fieldset>
           </form>

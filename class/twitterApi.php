@@ -71,6 +71,10 @@ class twitterApi {
     return $result;
   }
 
+  public function setTimeout($connect, $response) {
+    $this->oauth->setTimeouts($connect, $response);
+  }
+
 }
 
 

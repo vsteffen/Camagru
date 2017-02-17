@@ -36,7 +36,8 @@
   }
 
   function getIdUserByLogin($login, $bdd) {
-    $user = $bdd->query("SELECT `id_user` FROM `users` WHERE `login` = '" . $login . "' ;");
+    $user = $bdd->prepare('SELECT `id_user` FROM `users` WHERE `login` = :login ;');
+    $user->execute(array('login' => $login));
     if ($userData = $user->fetch())
       $id_user = $userData['id_user'];
     else
@@ -48,15 +49,9 @@
   if (!isset($_SESSION))
     session_start();
 
-  require_once('config/database.php');
-  try
-  {
-    $bdd = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
-  }
-  catch(Exception $e)
-  {
-    die('Error : '.$e->getMessage());
-  }
+  require_once('config/connect_bdd.php');
+  $bdd = connectBDD();
+
   $error = [];
   if (isset($_GET['user']) && !empty($_GET['user'])) {
     $id_userGalery = getIdUserByLogin($_GET['user'], $bdd);
@@ -102,6 +97,7 @@
   <head>
   	<title>Camagru - Galery user</title>
   	<link rel="stylesheet" href="./css/global.css">
+    <link rel="icon" href="image/ressource/logo2.png">
   </head>
   <body>
     <div class="head_and_main">
@@ -127,13 +123,9 @@
                 echo "   <span class='error'>" . $error[0] . "</span>";
               }
               else {
-                echo "   <h1><p class='app-title'>Galery of " . $_GET['user'] . "</p></h1>";
-                echo "   <span>In this section, you can see photos added by " . $_GET['user'] . ". Click on it to see it in detail!</span>";
+                echo "   <h1><p class='app-title'>Galery of " . htmlentities($_GET['user']) . "</p></h1>";
+                echo "   <span>In this section, you can see photos added by " . htmlentities($_GET['user']) . ". Click on it to see it in detail!</span>";
               }
-              // else {
-              //   echo "   <h1><p class='app-title'>Join the Camagru Community</p></h1>";
-              //   echo "   <span>Camagru is a community where users can exchange pictures easily and are also being able to add filters to their pictures. <a class='basic-href' href='register.php'>Join us</a>, it only takes a minute!</span>";
-              // }
               echo "  </div>";
               if (empty($error)) {
                 $thumbnailRow = 1;
@@ -152,9 +144,9 @@
                   </div>";
 
                   if (!empty($galeryData['title']))
-                    echo "<span class=\"thumbnailAuthor\">Title : " . $galeryData['title'] . "</span>";
+                    echo "<span class=\"thumbnailAuthor\">Title : " . htmlentities($galeryData['title']) . "</span>";
                   else
-                    echo "<span class=\"thumbnailAuthor\">By : " . getLoginByID($galeryData['id_user'], $bdd) . "</span>";
+                    echo "<span class=\"thumbnailAuthor\">By : " . htmlentities(getLoginByID($galeryData['id_user'], $bdd)) . "</span>";
 
                   echo "<span class=\"thumbnailThumbs\">Thumbs :
                   <div class=\"thumbnailThumbs_up\">" . $galeryData['thumbs_up'] ."</div> / <div class=\"thumbnailThumbs_down\">" . $galeryData['thumbs_down'] . "</div>

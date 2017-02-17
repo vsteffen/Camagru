@@ -16,17 +16,12 @@
     header('Location: index.php');
   else {
     $error = [];
-    require_once('config/database.php');
-    try
-    {
-      $bdd = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
-    }
-    catch(Exception $e)
-    {
-      $error[] = "Error in database with this message = \"" . $e->getMessage() . "\".";
-      exit();
-    }
-    $snap = $bdd->query("SELECT * FROM `snapshots` WHERE `id_snap` = " . $_GET['idPrimSnap'] . ";");
+
+    require_once('config/connect_bdd.php');
+    $bdd = connectBDD();
+
+    $snap = $bdd->prepare('SELECT * FROM `snapshots` WHERE `id_snap` = :idPrimSnap;');
+    $snap->execute(array('idPrimSnap' => $_GET['idPrimSnap']));
     if ($snapData = $snap->fetch()) {
       $scopeSnap = $snapData['scope'];
       $scopeOk = 0;
@@ -66,7 +61,7 @@
   <head>
   	<title>Camagru - See picture</title>
     <link rel="stylesheet" href="./css/global.css">
-  	<link rel="stylesheet" href="./css/login.css">
+    <link rel="icon" href="image/ressource/logo2.png">
   </head>
   <body>
     <div class="head_and_main">
@@ -75,7 +70,10 @@
         <div class="basic-page">
           <?php
             if (!empty($error)) {
-              echo "<div id='seeSnapError'>" . $error[0] . "</div>";
+              echo "<div class='app-title'>
+                      <h1>Something went wrong ...</h1>
+                    </div>";
+              echo "<span class='error basic-padding'>" . $error[0] . "</span>";
               $scopeSnap = -1;
               $thumbs_up = -1;
               $thumbs_down = -1;
@@ -85,14 +83,15 @@
               echo "<div id='setVisibilityPrivate' class='hidden'></div>";
               echo "<div id='setVisibilityMembers' class='hidden'></div>";
               echo "<div id='setVisibilityEveryone' class='hidden'></div>";
-              echo "<input  id=\"inputSetTitle\" class='hidden'>";
-              echo "<button id=\"submitSetTitle\" class='hidden'></button>";
+              echo "<input  id='inputSetTitle' class='hidden'>";
+              echo "<button id='submitSetTitle' class='hidden'></button>";
+              echo "<button id='deleteSnapshot' style='display:none;'></button>";
             }
             else {
               echo "<div id='seeSnap'>";
               if (!empty($title)) {
-                echo "<span id='seeSnapTitle'>Title : " . $title . "</span>";
-                echo "<a class='authorHref toRight' href='galery_user.php?user=" . $author . "'<span id='seeSnapAuthor'>Author : " . $author . "</span></br></a>";
+                echo "<span id='seeSnapTitle'>Title : " . htmlentities($title) . "</span>";
+                echo "<a class='authorHref toRight' href='galery_user.php?user=" . $author . "'<span id='seeSnapAuthor'>Author : " . htmlentities($author) . "</span></br></a>";
               }
               else {
                 echo "<a class='authorHref' href='galery_user.php?user=" . $author . "'<span id='seeSnapAuthor'>Author : " . $author . "</span></br></a>";
@@ -130,29 +129,40 @@
                       <button id=\"setVisibilityMembers\" class=\"btnClassic\">MEMBERS</button>
                     </div></br>";
               echo "<div id='delete'>
-                      <span>Delete account :</span>
+                      <span>Delete picture :</span>
                       <button id=\"deleteSnapshot\" class=\"btnClassic\">DELETE</button>
                     </div></br>";
               echo "</div>";
+            }
+            else {
+              echo "<div id='newPostSubmit' class='hidden'></div>";
+              echo "<div id='setVisibilityPrivate' class='hidden'></div>";
+              echo "<div id='setVisibilityMembers' class='hidden'></div>";
+              echo "<div id='setVisibilityEveryone' class='hidden'></div>";
+              echo "<input  id='inputSetTitle' class='hidden'>";
+              echo "<button id='submitSetTitle' class='hidden'></button>";
+              echo "<button id='deleteSnapshot' style='display:none;'></button>";
             }
             echo "<div id ='firstSepPost' class='sepPost'></div>";
 
             if (empty($error)) {
               echo "<div id='commentPosted'>";
-              $allPosts = $bdd->query("SELECT * FROM `posts` WHERE `id_snap` = " . $_GET['idPrimSnap'] . ";");
+              $allPosts = $bdd->prepare('SELECT * FROM `posts` WHERE `id_snap` = :idPrimSnap');
+              $allPosts->execute(array('idPrimSnap' => $_GET['idPrimSnap']));
               if ($postData = $allPosts->fetch()) {
                 $postLogin = getLoginOfId($bdd, $postData['id_user']);
                 $textMessage = "<div class=\"post\" id=\"" . $postData['id_post'] ."\">
-                                  <span class='postAuthor'>By " . $postLogin . "</span>
-                                  <p class='postMessage'>" . $postData['text'] . "</p>
+                                  <a class='authorHref' href='galery_user.php?user=" . htmlentities($postLogin) . "'><span class='postAuthor'>By " . htmlentities($postLogin) . "</span></a>
+                                  <p class='postMessage'>" . htmlentities($postData['text']) . "</p>
                                   <span class='postDate'>Posted on : ". $postData['timestamps'] ."</span>
                                 </div>";
                 echo $textMessage;
                 while ($postData = $allPosts->fetch()) {
+                  $postLogin = getLoginOfId($bdd, $postData['id_user']);
                   $textMessage = "<div class='sepPost'></div>
                                   <div class=\"post\" id=\"" . $postData['id_post'] ."\">
-                                    <span class='postAuthor'>By " . $postLogin . "</span>
-                                    <p class='postMessage'>" . $postData['text'] . "</p>
+                                    <a class='authorHref' href='galery_user.php?user=" . htmlentities($postLogin) . "'><span class='postAuthor'>By " . htmlentities($postLogin) . "</span></a>
+                                    <p class='postMessage'>" . htmlentities($postData['text']) . "</p>
                                     <span class='postDate'>Posted on : ". $postData['timestamps'] ."</span>
                                   </div>";
                   echo $textMessage;

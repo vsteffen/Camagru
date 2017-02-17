@@ -6,15 +6,9 @@
   if (!isset($_SESSION['id_user']) || !$_SESSION['id_user'])
     header("Location: connection.php");
 
-  require_once('config/database.php');
-  try
-  {
-    $bdd = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
-  }
-  catch(Exception $e)
-  {
-    die('Error : '.$e->getMessage());
-  }
+  require_once('config/connect_bdd.php');
+  $bdd = connectBDD();
+
   $error = [];
   if (isset($_POST['accountDelete'])) {
     if ($bdd->exec("DELETE FROM `users` WHERE `id_user` = " . $_SESSION['id_user'] . ";")) {
@@ -31,10 +25,14 @@
     if (strlen($_POST['localisationValue']) == 0) {
       $message[] = "Failed to change localisation, field was empty! (Must contain at least 1 character).";
     }
-    else if ($bdd->exec("UPDATE `users` SET `localisation` = '" . $_POST['localisationValue'] . "' WHERE `users`.`id_user` = '" . $_SESSION['id_user'] . "';"))
-      $message[] = "Success to change localisation (set at " . $_POST['localisationValue'] . ").";
-    else
-      $message[] = "Failed to change localisation (try at " . $_POST['localisationValue'] . ").";
+    else {
+      $updateLocalisation = $bdd->prepare('UPDATE `users` SET `localisation` = :localisation WHERE `users`.`id_user` = ' . $_SESSION['id_user'] . ';');
+      $updateLocalisation->execute(array('localisation' => htmlentities($_POST['localisationValue'])));
+      if ($updateLocalisation->rowCount() == 1)
+        $message[] = "Success to change localisation (set at " . htmlentities($_POST['localisationValue']) . ").";
+      else
+        $message[] = "Failed to change localisation (try at " . htmlentities($_POST['localisationValue']) . ").";
+    }
   }
   if (isset($_POST['changePassword'])) {
     function checkPassword($pwd) {
@@ -60,7 +58,9 @@
         $dataUser = $bdd->query("SELECT `pwd` FROM users WHERE id_user=" . $_SESSION['id_user'] . ";");
         if ($data = $dataUser->fetch()) {
           if ($data['pwd'] == hash('sha256', $_POST['oldPassword'])) {
-            if ($bdd->exec("UPDATE `users` SET `pwd` = '" . hash('sha256', $_POST['newPassword']) . "' WHERE `users`.`id_user` = " . $_SESSION['id_user'] . ";"))
+            $updatePassword = $bdd->prepare('UPDATE `users` SET `pwd` = :pass WHERE `users`.`id_user` = ' . $_SESSION['id_user'] . ';');
+            $updatePassword->execute(array('pass' => hash('sha256', $_POST['newPassword'])));
+            if ($updatePassword->rowCount() == 1)
               $message[] = "Success to change password!";
             else
               $message[] = "Failed to change password, error with database!";

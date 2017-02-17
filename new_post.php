@@ -10,17 +10,13 @@
           && isset($_POST['idPrimSnap']) && !empty($_POST['idPrimSnap'])
           && isset($_SESSION['login']) && !empty($_SESSION['login'])
           && isset($_SESSION['id_user']) && !empty($_SESSION['id_user'])) {
-      require_once('config/database.php');
-      try
-      {
-        $bdd = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
-      }
-      catch(Exception $e)
-      {
-        die('Error : '.$e->getMessage());
-      }
-      $newPost = $bdd->exec("INSERT INTO `posts` (`id_post`, `text`, `timestamps`, `id_snap`, `id_user`) VALUES (NULL, '" . $_POST['postText'] . "', NOW(), '" . $_POST['idPrimSnap'] . "', '" . $_SESSION['id_user'] . "');");
-      if ($newPost) {
+
+      require_once('config/connect_bdd.php');
+      $bdd = connectBDD();
+
+      $newPost = $bdd->prepare('INSERT INTO `posts` (`id_post`, `text`, `timestamps`, `id_snap`, `id_user`) VALUES (NULL, :postText, NOW(), :idPrimSnap, ' . $_SESSION['id_user'] . ');');
+      $newPost->execute(array('postText' => $_POST['postText'], 'idPrimSnap' => $_POST['idPrimSnap']));
+      if ($newPost->rowCount() == 1) {
           echo json_encode(array("status" => 1, "newPostId" => $bdd->lastInsertId()));
       }
       else {

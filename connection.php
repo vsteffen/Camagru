@@ -26,19 +26,15 @@ function checkStatus($status, &$errors, $mail) {
       if (empty($_POST['login']) || empty($_POST['password']))
         $wrong[] = "You must fill all the fields to continue.";
       else {
-        require_once('config/database.php');
-        try
-        {
-          $bdd = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
-        }
-        catch(Exception $e)
-        {
-          die('Error : '.$e->getMessage());
-        }
-        $dataUser = $bdd->query("SELECT * FROM users WHERE login='" . $_POST['login'] . "' OR mail='" . $_POST['login'] . "';");
+        require_once('config/connect_bdd.php');
+        $bdd = connectBDD();
+        $postLogin = htmlentities($_POST['login']);
+
+        $dataUser = $bdd->prepare('SELECT * FROM users WHERE login= :login1 OR mail= :login2;');
+        $dataUser->execute(array('login1' => $postLogin, 'login2' => $postLogin));
         if ($data = $dataUser->fetch()) {
           if (empty(checkStatus($data['status'], $wrong, $data['mail']))) {
-            if ($data['login'] == $_POST['login'] || $data['mail'] == $_POST['login'] ) {
+            if ($data['login'] == $postLogin || $data['mail'] == $postLogin ) {
               if ($data['pwd'] == hash('sha256', $_POST['password'])) {
                 $_SESSION['login'] = $data['login'];
                 $_SESSION['rank'] = (int)$data['rank'];
@@ -63,7 +59,7 @@ function checkStatus($status, &$errors, $mail) {
   <head>
   	<title>Camagru - Login</title>
     <link rel="stylesheet" href="./css/global.css">
-  	<link rel="stylesheet" href="./css/login.css">
+    <link rel="icon" href="image/ressource/logo2.png">
   </head>
   <body>
     <div class="head_and_main">
@@ -71,7 +67,7 @@ function checkStatus($status, &$errors, $mail) {
       <div class="main">
         </br></br>
         <div class="login">
-          <div class="login-screen">
+          <div class="loginScreen">
             <div class="app-title">
               <h1>Login</h1>
             </div>
@@ -82,20 +78,18 @@ function checkStatus($status, &$errors, $mail) {
                   }
               }
             ?>
-            <div class="login-form">
+            <div class="alignCenter">
               <form action="connection.php" method="post">
-                <div class="control-group">
-                  <input type="text" class="login-field" name="login" value="<?php if (isset($_POST['login'])) { echo $_POST['login']; } ?>" placeholder="Username or Email" id="login-name">
-                  <label class="login-field-icon fui-user" for="login-name"></label>
+                <div class="subsection">
+                  <input type="text" name="login" value="<?php if (isset($_POST['login'])) { echo $_POST['login']; } ?>" placeholder="Username or Email" id="login-name">
                 </div>
-                <div class="control-group">
-                  <input type="password" class="login-field" name="password" value="" placeholder="Password" id="login-pass">
-                  <label class="login-field-icon fui-lock" for="login-pass"></label>
+                <div class="subsection">
+                  <input type="password" name="password" value="" placeholder="Password" id="login-pass">
                 </div>
-                <input class="btn btn-primary btn-large btn-block" type="submit" name="submit" value="LOGIN">
-                <a class="login-link" href="reset_password.php">Lost your password? Reset it here!</a>
+                <input class="btn btnClassic" type="submit" name="submit" value="LOGIN">
+                <a class="smallHref" href="reset_password.php">Lost your password? Reset it here!</a>
                 </br>
-                <a class="login-link" href="register.php">Don't have an account ? Create one here !</a>
+                <a class="smallHref" href="register.php">Don't have an account ? Create one here !</a>
               </form>
             </div>
           </div>

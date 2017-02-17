@@ -163,13 +163,12 @@ function delTree($dir) {
                   END;
                 ";
 
-// INSERT INTO `tokens` (`id_token`, `usage`, `content`, `expires`, `id_user`) VALUES (NULL, '0', 'hsdjhfdsjfhsj', '2017-01-11 00:00:00', '1'), (NULL, '2', 'hjdhjghfdjghfj', '2017-01-11 00:00:00', '2'), (NULL, '0', 'sjkdfjksdkjkf', '2017-01-13 00:00:00', '3');
 
       $dbh->exec($query);
       delTree("../image/login");
       mkdir("../image/login");
       mkdir("../image/login/admin");
-      mkdir("../image/login/FFPsyko");
+      mkdir("../image/login/member1");
       mkdir("../image/login/member2");
       echo "DB installed successfully" . PHP_EOL;
   }

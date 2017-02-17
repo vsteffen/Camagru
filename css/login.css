@@ -1,4 +1,4 @@
-.login-screen {
+.loginScreen {
   position: relative;
   z-index: 1;
   background: #FFFFFF;
@@ -13,10 +13,10 @@ input:focus {
     outline-width: 0;
 }
 
-.login-form {
+.alignCenter {
 text-align: center;
 }
-.control-group {
+.subsection {
 margin-bottom: 10px;
 }
 
@@ -58,7 +58,7 @@ box-shadow: none;
   background-color: #F9BA32;
 }
 
-.login-link {
+.smallHref {
   font-size: 12px;
   color: #444;
   display: block;

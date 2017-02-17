@@ -11,7 +11,7 @@
   <head>
   	<title>Camagru - Take picture</title>
     <link rel="stylesheet" href="./css/global.css">
-  	<link rel="stylesheet" href="./css/login.css">
+    <link rel="icon" href="image/ressource/logo2.png">
   </head>
   <body>
     <div class="head_and_main">

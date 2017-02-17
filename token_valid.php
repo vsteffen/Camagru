@@ -7,15 +7,9 @@
       header('Location: index.php');
   }
 
-  require_once('config/database.php');
-  try
-  {
-    $bdd = new PDO($DB_DSN, $DB_USER, $DB_PASSWORD);
-  }
-  catch(Exception $e)
-  {
-    die('Erreur : '.$e->getMessage());
-  }
+  require_once('config/connect_bdd.php');
+  $bdd = connectBDD();
+
   if (isset($_POST)) {
     if (isset($_POST['changePassword'])) {
       function checkPassword($pwd) {
@@ -48,9 +42,13 @@
           $error = 1;
         }
         else {
-          $postTokenQuery = $bdd->query("SELECT `id_user`, `id_token` FROM `tokens` WHERE content='" . $_POST['changePassword'] . "';");
+          $postTokenQuery = $bdd->prepare('SELECT `id_user`, `id_token` FROM `tokens` WHERE content = :changePassword;');
+          $postTokenQuery->execute(array('changePassword' => $_POST['changePassword']));
           if ($dataTokenQuery = $postTokenQuery->fetch()) {
-            if ($bdd->exec("UPDATE `users` SET `pwd` = '" . hash('sha256', $_POST['newPassword']) . "' WHERE `users`.`id_user` = " . $dataTokenQuery['id_user'] . ";")) {
+            $updatePassword = $bdd->prepare('UPDATE `users` SET `pwd` = :newPassword WHERE `users`.`id_user` = :id_user;');
+            $updatePassword->execute(array('newPassword' => hash('sha256', $_POST['newPassword']), 'id_user' => $dataTokenQuery['id_user']));
+
+            if ($updatePassword->rowCount() == 1) {
                 $bdd->exec("DELETE FROM `tokens` WHERE `tokens`.`id_token` = " . $dataTokenQuery['id_token'] . ";");
                 $messageTitle = "Password changed";
                 $messageContent = "Your password has been changed!";
@@ -85,7 +83,8 @@
     }
   }
   if (!isset($successPOST) && isset($_GET['token'])) {
-    $result = $bdd->query("SELECT * FROM `tokens` WHERE content = '" . $_GET['token'] . "' AND expires > NOW();");
+    $result = $bdd->prepare('SELECT * FROM `tokens` WHERE content = :token AND expires > NOW();');
+    $result->execute(array('token' => $_GET['token']));
     if ($data = $result->fetch()) {
       if ($data['usage'] == 0) {
         $bdd->exec("UPDATE `users` SET `status` = '1' WHERE `users`.`id_user` = " . $data['id_user'] . ";");
